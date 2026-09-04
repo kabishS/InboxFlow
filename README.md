@@ -1,124 +1,116 @@
-# 📥 InboxFlow - AI-Powered Smart Email & Productivity Assistant
+﻿# 📥 InboxFlow — AI-Powered Smart Email & Productivity Assistant
 
-InboxFlow is an intelligent, high-utility SaaS email productivity dashboard. It leverages **Groq AI** for lightning-fast email analysis and **Gmail API** integration to transform your inbox into an actionable task and intelligence engine.
+> Transform your email into an actionable task and intelligence engine with lightning-fast AI analysis.
+
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.18-blue.svg)](https://expressjs.com/)
+[![Groq AI](https://img.shields.io/badge/Groq%20AI-Llama%203%20%2F%20Mixtral-orange.svg)](https://groq.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E.svg)](https://supabase.com/)
+[![Gmail API](https://img.shields.io/badge/Gmail%20API-OAuth2-EA4335.svg)](https://developers.google.com/gmail/api)
 
 ---
 
-## 🏗️ Tech Stack & Architecture
+## 🌟 Overview
 
-```
+**InboxFlow** is an intelligent, high-utility SaaS email productivity dashboard. It leverages **Groq AI** for ultra-fast email analysis and **Gmail API** integration to convert endless email chains into structured executive summaries, auto-extracted tasks, deadline timelines, follow-up alerts, and context-aware replies.
+
+---
+
+## 🚀 Key Features
+
+- 📥 **Smart AI Inbox**: Real-time email list with automatic AI priority tagging (HIGH, MEDIUM, LOW) and category categorization.
+- 🧠 **Thread Intelligence**: Instant executive summaries, key takeaways, action items, and sentiment analysis for complex email chains.
+- 📋 **Automated Task Management**: Automatically extract actionable tasks with assignees and statuses (To Do, In Progress, Completed).
+- ⏰ **Deadline View**: Chronological tracker of date-sensitive deliverables with urgency badges.
+- 🔁 **Follow-Ups Engine**: Detects outgoing emails awaiting replies with one-click follow-up draft generation.
+- ✍️ **AI Reply Generator**: Context-aware draft generator with selectable tones (*Professional*, *Direct*, *Empathetic*, *Decline politely*).
+- 🤖 **AI Copilot Assistant**: Natural language assistant to query your inbox (e.g., *"What were the budget decisions in yesterday's meeting?"*).
+- 📊 **Productivity Analytics**: Real-time stats on response times, tasks completed, and AI hours saved.
+
+---
+
+## 🏗️ Architecture
+
+`
 [ Frontend: HTML5 + CSS3 + Bootstrap 5 + Vanilla JS ]
                          │
                          ▼ (REST API / Fetch)
-[ Backend: Node.js + Express.js ]
+[ Backend: Node.js + Express.js REST API ]
      │                   │                   │
      ▼                   ▼                   ▼
-[ Gmail API ]       [ Groq API ]       [ Supabase ]
-(OAuth & Threads)  (AI Summaries &     (Tasks, Deadlines,
-                    Task Extraction)    Status & DB)
-```
-
-- **Frontend**: HTML5, CSS3 (Custom styling adhering to `DESIGN.md`), Bootstrap 5, Vanilla JavaScript (Modular ES Modules / AJAX API client)
-- **Backend API**: Node.js + Express.js REST API
-- **Integrations**:
-  - 📩 **Gmail API**: OAuth2 authentication, reading email threads, fetching messages, drafting/sending replies.
-  - ⚡ **Groq API**: High-speed AI LLM inference (Llama 3 / Mixtral) for email classification, summarization, task extraction, sentiment detection, and draft generation.
-  - ⚡ **Supabase**: PostgreSQL database + Auth session storage for synced metadata, generated tasks, deadline tracking, follow-ups, and user settings.
+[ Gmail API ]       [ Groq AI ]        [ Supabase ]
+(OAuth & Threads)   (Llama 3 / Mixtral (Database &
+                     Inference)         Storage)
+`
 
 ---
 
-## 🎨 UI Modules & Core Features
+## 💻 Local Setup & Installation
 
-Based on the design specs in the `/UI` directory, InboxFlow contains 10 core modules:
+### 1. Prerequisites
+- **Node.js** (v18.0.0 or higher)
+- **npm** (v9.0.0 or higher)
 
-1. 🔐 **Authentication & OAuth Sync (`login_inbox_flow`)**
-   - Google OAuth2 Login with Gmail API scope permissions.
-   - Secure session management with Supabase.
+### 2. Clone the Repository
+`ash
+git clone https://github.com/kabishS/InboxFlow.git
+cd InboxFlow
+`
 
-2. 📥 **Smart AI Inbox (`smart_inbox_inbox_flow`)**
-   - Real-time email thread list with auto-assigned AI priority tags (`HIGH`, `MEDIUM`, `LOW`).
-   - Category filtering (`All`, `Important`, `Unread`, `Needs Reply`, `Has Tasks`).
-   - Clean, high-contrast Corporate Minimalist layout.
+### 3. Install Dependencies
+`ash
+npm install
+`
 
-3. 🧠 **Thread Intelligence (`thread_intelligence_inbox_flow`)**
-   - Detailed email reader view.
-   - Executive AI Summary, Key Takeaways, Action Items, and Sentiment Indicator.
+### 4. Configure Environment Variables
+Copy .env.example to .env and fill in your credentials:
+`ash
+cp .env.example .env
+`
 
-4. 📋 **Task Management (`task_management_inbox_flow`)**
-   - Automatically extracted tasks from emails stored in Supabase.
-   - Status updates (`To Do`, `In Progress`, `Completed`), assignee, and direct link back to source email thread.
+Set the following variables in .env:
+`env
+PORT=3000
+SESSION_SECRET=your_secret_key
 
-5. ⏰ **Deadline View (`deadline_view_inbox_flow`)**
-   - Timeline/Calendar list of date-sensitive action items extracted by Groq AI.
-   - Urgency badges and overdue alerts.
+# Groq AI API
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-20b
 
-6. 🔁 **Follow-ups Engine (`follow_ups_inbox_flow`)**
-   - Automated detection of sent emails awaiting responses.
-   - Smart reminder triggers and one-click follow-up draft generation.
+# Google OAuth / Gmail API
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
 
-7. 📊 **Productivity Analytics (`productivity_analytics_inbox_flow`)**
-   - Metrics dashboard tracking Email Response Time, Tasks Completed, AI Hours Saved, and Inbox Zero progress.
+# Supabase
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+`
 
-8. ✍️ **AI Reply Generator (`reply_generator_inbox_flow`)**
-   - One-click context-aware response generator (Tones: *Professional*, *Direct*, *Empathetic*, *Decline politely*).
-
-9. 🤖 **AI Copilot Assistant (`ai_copilot_inbox_flow`)**
-   - Floating chat bar and drawer allowing natural language queries over your inbox (e.g., *"What did Sarah say about the Q3 budget?"*).
-
-10. 📊 **AI Overview Dashboard (`ai_dashboard_inbox_flow`)**
-    - High-level daily briefing summarizing unread priority emails and pending deadlines.
-
----
-
-## ✨ Proposed Additional Features
-
-Beyond the core requirements, here are recommended high-value features for InboxFlow:
-
-1. 📅 **One-Click Calendar Export (.ics & Google Calendar Sync)**
-   - Export extracted deadlines directly to Google Calendar or download an `.ics` file.
-2. 🏷️ **Custom AI Classification Rules**
-   - Allow users to define custom labels (e.g., *Invoices*, *Recruiting*, *Clients*) for Groq to auto-categorize emails.
-3. 🔔 **Smart Push & Email Notifications**
-   - Instant alerts for high-priority emails containing urgent deadlines.
-4. 🎭 **Custom Tone & Brand Voice Configuration**
-   - Save custom response templates and persona settings for the AI Reply Generator.
-5. 🔍 **Semantic Vector Search across Emails (via Supabase Vector)**
-   - Perform natural language search across past email histories and attachments.
+### 5. Run the Server
+`ash
+npm start
+`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🛠️ Step-by-Step Implementation Plan
+## 🌐 Deploying to Render
 
-When you say **"process"**, execution will proceed according to the following plan:
+1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** > **Web Service**.
+2. Connect your GitHub repository kabishS/InboxFlow.
+3. Set the build configuration:
+   - **Runtime**: Node
+   - **Build Command**: 
+pm install
+   - **Start Command**: 
+pm start
+4. Add your Environment Variables in the Render settings.
+5. In your [Google Cloud Console](https://console.cloud.google.com/apis/credentials), add your Render URL callback to Authorized redirect URIs:
+   https://<your-render-app-name>.onrender.com/auth/google/callback
+6. Click **Deploy**!
 
-### Phase 1: Project Setup & Infrastructure
-- Initialize Node.js Express server (`package.json`, environment configurations for Gmail OAuth, Groq API key, Supabase URL/Key).
-- Set up Supabase DB schema (`emails`, `tasks`, `deadlines`, `follow_ups`, `user_settings`).
-- Configure Bootstrap 5 frontend asset structure (`/public/css`, `/public/js`, `/public/views`).
+---
 
-### Phase 2: Backend Core & Integrations
-- **Gmail Service**: Implement OAuth login flow, thread fetcher, message parser, and send/draft handler.
-- **Groq AI Service**: Build structured prompt handlers for:
-  - Priority & Category Tagging
-  - Executive Summaries & Task Extraction
-  - Reply Draft Generation
-  - Copilot Q&A
-- **Supabase Service**: Build CRUD endpoints for storing synced email metadata, tasks, deadlines, and analytics.
-
-### Phase 3: Frontend Development (Bootstrap 5 + JS)
-- Build unified responsive layout shell with Fixed Sidebar + Fluid Content Area according to `DESIGN.md`.
-- Implement page views:
-  - `index.html` / `inbox.html` (Smart Inbox)
-  - `thread.html` (Thread Intelligence & Reader)
-  - `tasks.html` (Task Board)
-  - `deadlines.html` (Deadline Tracker)
-  - `followups.html` (Follow-up Manager)
-  - `analytics.html` (Productivity Dashboard)
-  - `copilot` Drawer & Floating Widget
-- Wire up Frontend Vanilla JS client with Express REST API.
-
-### Phase 4: Testing & Verification
-- Test Gmail OAuth authorization flow.
-- Test Groq AI parsing performance on sample email threads.
-- Verify Supabase data persistence and UI responsiveness.
-
+## 📄 License
+MIT License. Feel free to use and customize for your own projects!
