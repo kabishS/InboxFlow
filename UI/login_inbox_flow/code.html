@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Inbox Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#006477",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary": "#003d9b",
+                        "surface-dim": "#d9dadb",
+                        "on-error": "#ffffff",
+                        "outline": "#737685",
+                        "on-tertiary-container": "#76e2ff",
+                        "tertiary-fixed-dim": "#48d7f9",
+                        "secondary": "#4c5e83",
+                        "on-primary-fixed": "#001848",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-fixed": "#afecff",
+                        "secondary-container": "#bfd2fd",
+                        "on-tertiary-fixed-variant": "#004e5d",
+                        "surface-container": "#edeeef",
+                        "surface": "#f8f9fa",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-surface": "#2e3132",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#041b3c",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#34476a",
+                        "primary-container": "#0052cc",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1d",
+                        "background": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#434654",
+                        "surface-variant": "#e1e3e4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary-container": "#475a7e",
+                        "tertiary": "#004b59",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed-dim": "#b4c7f1",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary-fixed": "#dae2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "container-padding-desktop": "32px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full flex items-center justify-center bg-background text-on-background antialiased relative overflow-hidden">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 z-0 pointer-events-none opacity-20 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-fixed-dim via-background to-background"></div>
+<div class="absolute -bottom-32 -left-32 w-96 h-96 bg-secondary-fixed opacity-10 rounded-full blur-3xl z-0 pointer-events-none"></div>
+<main class="w-full max-w-md mx-container-padding-mobile md:mx-0 z-10">
+<!-- Login Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_16px_rgba(9,30,66,0.08)] border border-surface-variant p-8 md:p-10 flex flex-col gap-stack-lg">
+<!-- Header Section -->
+<div class="flex flex-col items-center text-center mb-unit">
+<div class="w-12 h-12 bg-primary-container rounded-lg flex items-center justify-center mb-stack-sm shadow-sm">
+<span class="material-symbols-outlined text-on-primary" data-icon="mark_email_read" style="font-variation-settings: 'FILL' 1; font-size: 28px;">mark_email_read</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-unit">Inbox Flow</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Turn emails into action</p>
+</div>
+<!-- Login Form -->
+<form action="#" class="flex flex-col gap-stack-md w-full" method="POST">
+<!-- Email Field -->
+<div class="flex flex-col gap-unit">
+<label class="font-label-md text-label-md text-on-surface" for="email">Email address</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="mail">mail</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2 bg-background border border-surface-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow duration-200" id="email" name="email" placeholder="you@company.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-unit">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+<a class="font-label-sm text-label-sm text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="lock">lock</span>
+</div>
+<input class="w-full pl-10 pr-10 py-2 bg-background border border-surface-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow duration-200" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="mt-unit w-full bg-primary-container text-on-primary font-label-md text-label-md py-3 rounded-lg hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 flex justify-center items-center gap-2" type="submit">
+                    Login
+                    <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Sign Up Link -->
+<div class="text-center pt-stack-sm border-t border-surface-variant">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Don't have an account? 
+                    <a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors ml-1" href="#">Sign Up</a>
+</p>
+</div>
+</div>
+<!-- Trust Indicators / Footer (Optional minimal touch) -->
+<div class="text-center mt-stack-md opacity-60">
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 Inbox Flow. Enterprise grade security.</p>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Follow-ups</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .followup-card {
+      background: var(--surface);
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+    }
+    .followup-card .ai-suggestion {
+      background: var(--ai-tint);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .followup-card .ai-suggestion strong { color: var(--primary-btn); }
+    .insights-panel {
+      width: 320px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div><div class="brand-name">Inbox Flow</div><div class="brand-sub">AI Productivity</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item active"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search follow-ups..." id="followup-search">
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-ghost" onclick="syncFollowUps()" id="sync-btn">
+          <i class="bi bi-arrow-repeat"></i> Scan Sent
+        </button>
+        <div class="icon-btn"><i class="bi bi-bell"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h1 style="font-size:26px;font-weight:700;">Follow-ups</h1>
+        <div class="d-flex gap-2">
+          <button class="btn-primary" onclick="setTab('me')">Waiting for Me</button>
+          <button class="btn-ghost" onclick="setTab('them')">Waiting for Them</button>
+        </div>
+      </div>
+      <p style="color:var(--on-surface-v);margin-bottom:24px;">Manage threads awaiting your action or responses from others.</p>
+
+      <div class="row g-4">
+        <div class="col-md-8">
+          <div id="followups-list">
+            <div class="empty-state"><span class="spinner"></span><p class="mt-3">Loading follow-ups...</p></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card" style="padding:20px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+              <i class="bi bi-graph-up" style="color:var(--primary-btn);"></i> Follow-up Insights
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span style="font-size:14px;">Average Response Time</span>
+              <span id="avg-response" style="font-weight:700;">—</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span style="font-size:14px;">Success Rate (Nudges)</span>
+              <span id="success-rate" style="font-weight:700;color:var(--primary-btn);">—</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span style="font-size:14px;">Pending Total</span>
+              <span id="pending-total" style="font-weight:700;color:var(--error);">—</span>
+            </div>
+            <div style="height:80px;background:var(--ai-tint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--on-surface-v);font-size:12px;">
+              Activity chart
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i></button>
+
+<script src="/js/api.js"></script>
+<script>
+let allFollowUps = [];
+let currentTab = 'me';
+
+function setTab(tab) {
+  currentTab = tab;
+  renderFollowUps();
+}
+
+async function syncFollowUps() {
+  const btn = document.getElementById('sync-btn');
+  btn.innerHTML = '<span class="spinner"></span> Scanning...';
+  btn.disabled = true;
+  try {
+    const result = await API.syncFollowUps();
+    showToast(`Found ${result.synced} follow-ups from sent emails`, 'success');
+    await loadFollowUps();
+  } catch(e) {
+    showToast('Sync failed: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Scan Sent';
+    btn.disabled = false;
+  }
+}
+
+async function loadFollowUps() {
+  try {
+    const { followups } = await API.getFollowUps();
+    allFollowUps = followups || [];
+    const active = allFollowUps.filter(f => !f.dismissed).length;
+    document.getElementById('pending-total').textContent = active + ' Active';
+    document.getElementById('avg-response').textContent = '1.2 Days';
+    document.getElementById('success-rate').textContent = '84%';
+    renderFollowUps();
+  } catch(e) {
+    document.getElementById('followups-list').innerHTML =
+      `<div class="empty-state"><i class="bi bi-exclamation-circle"></i><h3>Error</h3><p>${e.message}</p>
+      <button class="btn-primary mt-3" onclick="syncFollowUps()"><i class="bi bi-arrow-repeat"></i> Scan Sent Emails</button></div>`;
+  }
+}
+
+function renderFollowUps() {
+  const search = document.getElementById('followup-search').value.toLowerCase();
+  const filtered = allFollowUps.filter(f => {
+    if (f.dismissed) return false;
+    if (search && !f.subject?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const container = document.getElementById('followups-list');
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-check2-all"></i>
+        <h3>No Follow-ups Pending</h3>
+        <p>All your sent emails have received replies!</p>
+        <button class="btn-primary mt-3" onclick="syncFollowUps()"><i class="bi bi-arrow-repeat"></i> Scan Sent Emails</button>
+      </div>`;
+    return;
+  }
+
+  const urgencyColors = { URGENT: 'var(--error)', STANDARD: 'var(--secondary)', LOW: 'var(--on-surface-v)' };
+
+  container.innerHTML = filtered.map(f => {
+    const dueInfo = getDueInfo(f);
+    const sourceBadge = f.source === 'manual' 
+      ? '<span class="badge bg-secondary" style="font-size:10px;"><i class="bi bi-clock"></i> Scheduled</span>' 
+      : (f.source === 'ai_detected' ? '<span class="badge bg-primary" style="font-size:10px;"><i class="bi bi-robot"></i> AI Detected</span>' : '');
+
+    return `
+    <div class="followup-card" id="fu-${f.id}">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <span class="badge-priority badge-${f.urgency === 'URGENT' ? 'HIGH' : f.urgency === 'STANDARD' ? 'MEDIUM' : 'LOW'}">${f.urgency}</span>
+          ${dueInfo.text ? `<span style="font-size:12px;color:${dueInfo.color};margin-left:8px;font-weight:600;">${dueInfo.badge} ${dueInfo.text}</span>` : `<span style="font-size:12px;color:var(--on-surface-v);margin-left:8px;"><i class="bi bi-clock"></i> ${f.days_pending || 0} Day${f.days_pending !== 1 ? 's' : ''} Pending</span>`}
+          ${sourceBadge ? `<span style="margin-left:8px;">${sourceBadge}</span>` : ''}
+        </div>
+        <button class="icon-btn" onclick="dismissFollowUp('${f.id}')" title="Dismiss">
+          <i class="bi bi-x" style="font-size:16px;"></i>
+        </button>
+      </div>
+      <h3 style="font-size:16px;font-weight:700;margin:8px 0 2px;">${f.subject || 'Untitled Thread'}</h3>
+      <p style="font-size:13px;color:var(--on-surface-v);">To: ${f.to_email || 'Unknown'} • Follow-up: ${f.days_pending > 3 ? 'Past Due' : 'Soon'}</p>
+
+      ${f.suggested_action ? `
+        <div class="ai-suggestion">
+          <strong><i class="bi bi-robot"></i> Suggested Action: ${f.suggested_action}</strong>
+        </div>
+      ` : ''}
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn-primary" style="font-size:13px;" onclick="generateReply('${f.thread_id}', 'fu-${f.id}')">
+          <i class="bi bi-stars"></i> Generate Reply
+        </button>
+        ${f.thread_id ? `
+        <button class="btn-ghost" style="font-size:13px;" onclick="checkReply('${f.thread_id}', '${f.id}')">
+          <i class="bi bi-envelope-check"></i> Check Reply
+        </button>` : ''}
+        <button class="btn-ghost" style="font-size:13px;" onclick="dismissFollowUp('${f.id}')">Dismiss</button>
+      </div>
+      <div id="draft-${f.id}" style="display:none;margin-top:12px;">
+        <textarea class="form-control" rows="4" style="font-size:13px;font-family:var(--font);" id="draft-text-${f.id}"></textarea>
+        <div class="d-flex gap-2 mt-2">
+          <button class="btn-primary" style="font-size:12px;" onclick="sendDraft('${f.thread_id}', '${f.id}', '${f.to_email}', '${f.subject}')">
+            <i class="bi bi-send"></i> Send
+          </button>
+          <button class="btn-ghost" style="font-size:12px;" onclick="document.getElementById('draft-${f.id}').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+}
+
+async function generateReply(threadId, cardId) {
+  const draftEl = document.getElementById('draft-' + cardId.replace('fu-', ''));
+  if (!threadId) {
+    showToast('No thread ID available', 'error');
+    return;
+  }
+  showToast('Generating reply...', 'default');
+  try {
+    const { draft } = await API.generateFollowUpReply(threadId);
+    document.getElementById('draft-text-' + cardId.replace('fu-', '')).value = draft;
+    draftEl.style.display = 'block';
+  } catch(e) {
+    showToast('Failed: ' + e.message, 'error');
+  }
+}
+
+async function dismissFollowUp(id) {
+  try {
+    await API.dismissFollowUp(id);
+    document.getElementById('fu-' + id)?.remove();
+    showToast('Follow-up dismissed', 'success');
+  } catch(e) {
+    showToast(e.message, 'error');
+  }
+}
+
+document.getElementById('followup-search').addEventListener('input', renderFollowUps);
+
+async function checkReply(threadId, followupId) {
+  if (!threadId) return;
+  showToast('Checking for reply...', 'default');
+  try {
+    const result = await API.checkFollowUpReply(threadId, followupId);
+    if (result.replied) {
+      showToast('Reply received! Follow-up resolved. ✅', 'success');
+      document.getElementById('fu-' + followupId)?.remove();
+    } else {
+      showToast('No reply yet.', 'default');
+    }
+  } catch(e) {
+    showToast('Check failed: ' + e.message, 'error');
+  }
+}
+
+function getDueInfo(f) {
+  if (!f.due_date) return { text: '', color: '', badge: '' };
+  const now = new Date();
+  const due = new Date(f.due_date);
+  const diffMs = due - now;
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays > 1) return { text: `Due in ${diffDays} days`, color: '#2e7d32', badge: '⏰' };
+  if (diffDays === 1) return { text: 'Due tomorrow', color: '#ef6c00', badge: '⏰' };
+  if (diffDays === 0) return { text: 'Due today', color: '#ef6c00', badge: '⚠️' };
+  return { text: `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? 's' : ''} overdue`, color: '#c62828', badge: '🔴' };
+}
+
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user.picture) document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+  await loadFollowUps();
+})();
+</script>
+</body>
+</html>
+

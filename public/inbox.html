@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Smart Inbox</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .quick-deadline-btn {
+      opacity: 0.85;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--outline-v);
+      background: var(--surface);
+      color: var(--primary-btn);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .quick-deadline-btn:hover {
+      background: var(--primary-btn);
+      color: #fff;
+      border-color: var(--primary-btn);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div>
+        <div class="brand-name">Inbox Flow</div>
+        <div class="brand-sub">AI Productivity</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-page="dashboard"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item active" data-page="inbox"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item" data-page="tasks"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item" data-page="deadlines"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item" data-page="followups"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item" data-page="analytics"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="/settings" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search inbox..." id="inbox-search">
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Refresh" onclick="loadThreads()"><i class="bi bi-arrow-clockwise"></i></button>
+        <div class="icon-btn" onclick="window.location.href='/settings'" title="Settings"><i class="bi bi-gear"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="main-content" style="flex-direction:row;overflow:hidden;">
+      <!-- Inbox List -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <!-- Filter Tabs -->
+        <div class="filter-tabs px-2">
+          <span class="filter-tab active" data-filter="ALL">All</span>
+          <span class="filter-tab" data-filter="HIGH">Important</span>
+          <span class="filter-tab" data-filter="UNREAD">Unread</span>
+          <span class="filter-tab" data-filter="NEEDS_REPLY">Needs Reply</span>
+          <span class="filter-tab" data-filter="HAS_TASKS">Has Tasks</span>
+          <div class="ms-auto d-flex align-items-center gap-2 py-2">
+            <button class="btn-primary" style="font-size:12px;padding:5px 12px;background:linear-gradient(135deg,var(--primary-btn),#0097a7);" onclick="window.location.href='/compose'">
+              <i class="bi bi-pencil-square"></i> + Compose &amp; Compress
+            </button>
+            <button class="btn-outline-secondary" style="font-size:12px;padding:5px 12px;border-radius:var(--radius-sm);" onclick="window.location.href='/deadlines'">
+              <i class="bi bi-calendar3"></i> Deadlines
+            </button>
+          </div>
+        </div>
+
+
+        <!-- Email List -->
+        <div id="email-list" style="flex:1;overflow-y:auto;">
+          <div class="empty-state" id="loading-state">
+            <span class="spinner"></span>
+            <p class="mt-3">Loading your inbox...</p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="border-top:1px solid var(--outline-v);padding:8px 16px;display:flex;justify-content:flex-end;gap:8px;" id="pagination-bar">
+          <button class="btn-ghost" style="padding:4px 12px;font-size:12px;" id="prev-btn" disabled>← Prev</button>
+          <button class="btn-ghost" style="padding:4px 12px;font-size:12px;" id="next-btn" disabled>Next →</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'" title="AI Copilot">
+  <i class="bi bi-robot"></i>
+</button>
+
+<script src="/js/api.js"></script>
+<script>
+let allThreads = [];
+let currentFilter = 'ALL';
+let nextPageToken = null;
+
+async function loadThreads(pageToken = null) {
+  document.getElementById('email-list').innerHTML = `
+    <div class="empty-state"><span class="spinner"></span><p class="mt-3">Loading inbox with AI analysis...</p></div>`;
+  try {
+    const params = { maxResults: 20 };
+    if (pageToken) params.pageToken = pageToken;
+    const data = await API.getThreads(params);
+    allThreads = data.threads || [];
+    nextPageToken = data.nextPageToken;
+    document.getElementById('next-btn').disabled = !nextPageToken;
+    renderThreads();
+  } catch(e) {
+    document.getElementById('email-list').innerHTML = `
+      <div class="empty-state"><i class="bi bi-exclamation-circle"></i><h3>Error Loading Inbox</h3><p>${e.message}</p></div>`;
+  }
+}
+
+function renderThreads() {
+  const search = document.getElementById('inbox-search').value.toLowerCase();
+  let filtered = allThreads.filter(t => {
+    if (search && !t.subject.toLowerCase().includes(search) && !t.from.toLowerCase().includes(search)) return false;
+    if (currentFilter === 'ALL') return true;
+    if (currentFilter === 'HIGH') return t.ai?.priority === 'HIGH';
+    if (currentFilter === 'UNREAD') return t.labelIds?.includes('UNREAD');
+    if (currentFilter === 'NEEDS_REPLY') return t.ai?.intent?.includes('Reply') || t.ai?.intent?.includes('Approval');
+    if (currentFilter === 'HAS_TASKS') return t.ai?.tasks?.length > 0;
+    return true;
+  });
+
+  const container = document.getElementById('email-list');
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><i class="bi bi-inbox"></i><h3>No emails found</h3><p>Try a different filter.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="card" style="border-radius:0;border-left:none;border-right:none;box-shadow:none;">
+    ${filtered.map(t => {
+      const isUnread = t.labelIds?.includes('UNREAD');
+      const senderName = t.from.replace(/<.*>/, '').trim() || t.from;
+      const priority = t.ai?.priority || 'MEDIUM';
+      const safeSubject = (t.subject || 'Meeting / Email').replace(/'/g, "\\'");
+      const safeSender = senderName.replace(/'/g, "\\'");
+      const snippet = (t.snippet || '').replace(/'/g, "\\'");
+
+      return `
+        <div class="email-row ${isUnread ? 'unread' : ''}" onclick="window.location.href='/thread?id=${t.id}'">
+          <input type="checkbox" class="form-check-input flex-shrink-0" onclick="event.stopPropagation()">
+          <div class="avatar-email">${getInitials(senderName)}</div>
+          <div style="width:130px;flex-shrink:0;">
+            <div class="email-from">${senderName.slice(0,16)}${senderName.length>16?'…':''}</div>
+          </div>
+          <span class="badge-priority badge-${priority}" style="flex-shrink:0;">${priority}</span>
+          <div class="email-info">
+            <span class="email-subject">${t.subject.slice(0,42)}${t.subject.length>42?'…':''}</span>
+            <span style="color:var(--on-surface-v);"> - ${t.snippet.slice(0,50)}...</span>
+          </div>
+
+          <!-- Quick 1-Click Compress & Deadline Buttons -->
+          <div class="flex-shrink-0 d-flex gap-1" onclick="event.stopPropagation()">
+            <button class="quick-deadline-btn" style="color:#00838f;border-color:#b2ebf2;" onclick="window.location.href='/compose?threadId=${t.id}&mode=compress'" title="AI Compress & TL;DR Digest">
+              <i class="bi bi-lightning-charge"></i> Compress
+            </button>
+            <button class="quick-deadline-btn" onclick="quickAddDeadlineToCalendar('${t.id}', '${safeSubject}', '${safeSender}', '${snippet}')" title="Add as Deadline & Calendar Event">
+              <i class="bi bi-calendar-plus"></i> +Deadline
+            </button>
+          </div>
+
+
+          ${t.labelIds?.includes('ATTACHMENT') ? '<i class="bi bi-paperclip text-muted flex-shrink-0"></i>' : ''}
+          <div class="email-meta">
+            ${t.ai?.category ? `<span class="badge-cat">${t.ai.category}</span>` : ''}
+            <div>${timeAgo(t.date)}</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  </div>`;
+}
+
+// ─── Quick Add Deadline & Calendar Event ─────────────────────
+async function quickAddDeadlineToCalendar(threadId, subject, sender, snippet) {
+  // Check if snippet or subject mentions meeting time like 5pm, 4:00 PM, tomorrow, etc.
+  const lower = (subject + ' ' + snippet).toLowerCase();
+  let detectedTime = '5:00 PM';
+  const timeMatch = lower.match(/(\d{1,2}(?::\d{2})?\s*(?:am|pm))/i);
+  if (timeMatch) {
+    detectedTime = timeMatch[1].toUpperCase();
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const dueLabel = `Today at ${detectedTime}`;
+
+  try {
+    await API.createDeadline({
+      title: subject || 'Meeting with ' + sender,
+      source_email: subject,
+      from_email: sender,
+      thread_id: threadId,
+      due_date: todayStr,
+      due_label: dueLabel,
+      priority: 'HIGH',
+      status: 'pending'
+    });
+    showToast(`✅ Added to Deadlines & Calendar for ${dueLabel}!`, 'success');
+  } catch(e) {
+    showToast('Failed to add deadline: ' + e.message, 'error');
+  }
+}
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    renderThreads();
+  });
+});
+
+// Search
+document.getElementById('inbox-search').addEventListener('input', renderThreads);
+
+// Pagination
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (nextPageToken) loadThreads(nextPageToken);
+});
+
+// Init
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user.picture) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+  }
+  await loadThreads();
+})();
+</script>
+</body>
+</html>

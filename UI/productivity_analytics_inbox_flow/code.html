@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Analytics - Inbox Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#006477",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary": "#003d9b",
+                        "surface-dim": "#d9dadb",
+                        "on-error": "#ffffff",
+                        "outline": "#737685",
+                        "on-tertiary-container": "#76e2ff",
+                        "tertiary-fixed-dim": "#48d7f9",
+                        "secondary": "#4c5e83",
+                        "on-primary-fixed": "#001848",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-fixed": "#afecff",
+                        "secondary-container": "#bfd2fd",
+                        "on-tertiary-fixed-variant": "#004e5d",
+                        "surface-container": "#edeeef",
+                        "surface": "#f8f9fa",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-surface": "#2e3132",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#041b3c",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#34476a",
+                        "primary-container": "#0052cc",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1d",
+                        "background": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#434654",
+                        "surface-variant": "#e1e3e4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary-container": "#475a7e",
+                        "tertiary": "#004b59",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed-dim": "#b4c7f1",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary-fixed": "#dae2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "container-padding-desktop": "32px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-background text-on-background h-full font-body-md overflow-x-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-inverse-surface text-primary dark:text-inverse-primary font-body-md fixed left-0 top-0 h-screen w-[240px] border-r border-surface-variant dark:border-outline-variant shadow-sm flex-col py-stack-lg z-20 transition-colors duration-200">
+<div class="px-gutter mb-stack-lg flex flex-col gap-unit">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Inbox Flow</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI Productivity</span>
+</div>
+<ul class="flex flex-col gap-unit flex-grow">
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inbox">inbox</span>
+<span>Inbox</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="checklist">checklist</span>
+<span>Tasks</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span>Deadlines</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="repeat">repeat</span>
+<span>Follow-ups</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-primary dark:text-inverse-primary font-bold border-r-4 border-primary transition-colors duration-200 bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+</li>
+<li class="mt-auto">
+<a class="flex items-center gap-stack-sm px-gutter py-stack-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+<div class="px-gutter mt-stack-lg">
+<button class="w-full bg-primary-container text-on-primary py-stack-sm px-stack-md rounded-DEFAULT font-label-md text-label-md flex justify-center items-center gap-unit transition-all hover:opacity-90">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+                AI Copilot
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-grow md:ml-[240px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface text-primary dark:text-inverse-primary font-body-lg fixed top-0 right-0 w-full md:w-[calc(100%-240px)] h-16 border-b border-surface-variant dark:border-outline-variant flat flex justify-between items-center px-container-padding-desktop z-10 transition-all duration-200">
+<div class="flex items-center md:hidden">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">Inbox Flow</span>
+</div>
+<div class="flex-grow flex justify-center md:justify-start">
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-stack-sm top-1/2 transform -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface text-on-surface pl-10 pr-stack-sm py-2 rounded-DEFAULT border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all" placeholder="Search insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a user against a neutral grey background. The lighting is soft and flattering, suitable for a modern SaaS application profile avatar. The person has a slight smile, conveying a calm and professional demeanor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhG3y6-xXTgBcTnp2aVIVfLGAf_QV-9WKVJlmmSNNs6X0j31eStVMMDlth4dU9njsJJmTLOrXfWVwD8us8zcgGNW7pm3nlu-xXnYEMyJUF5KR8Fipd7d1SbTDZ71AIZ_gKP9Za9VDL_9sZYDLRH1tpaxVGH_4EsVQyWJ5UpeqNTlo5wR45z1yWkN27p8hTmhj3Bzmz5ZvUl2EyR-saJSpDPqZOFXEvlcKU5ST09T2ghxpig5WPgf4T"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-grow pt-[88px] px-container-padding-mobile md:px-container-padding-desktop pb-container-padding-desktop">
+<div class="max-w-7xl mx-auto">
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-stack-lg">Inbox Productivity Insights</h1>
+<!-- Summary Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-lg">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Emails Processed</span>
+<span class="material-symbols-outlined text-primary-container bg-primary-fixed p-1 rounded">mark_email_read</span>
+</div>
+<div class="flex items-end gap-stack-sm">
+<span class="font-headline-xl text-headline-xl text-on-background">1,240</span>
+<span class="font-body-md text-body-md text-tertiary-container flex items-center mb-1">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> 12%
+                            </span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute right-0 top-0 w-32 h-32 bg-secondary-fixed rounded-bl-full opacity-20 transform translate-x-8 -translate-y-8 group-hover:scale-110 transition-transform"></div>
+<div class="flex justify-between items-start mb-stack-sm relative z-10">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tasks Extracted</span>
+<span class="material-symbols-outlined text-secondary bg-secondary-fixed p-1 rounded">task_alt</span>
+</div>
+<div class="flex items-end gap-stack-sm relative z-10">
+<span class="font-headline-xl text-headline-xl text-on-background">84</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm flex flex-col justify-between bg-gradient-to-br from-surface-container-lowest to-[#f0f4ff]">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Replies Generated</span>
+<span class="material-symbols-outlined text-primary bg-primary-fixed-dim p-1 rounded">smart_toy</span>
+</div>
+<div class="flex items-end gap-stack-sm">
+<span class="font-headline-xl text-headline-xl text-primary">156</span>
+<span class="font-body-md text-body-md text-on-surface-variant mb-1">this week</span>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Avg. Response Time</span>
+<span class="material-symbols-outlined text-tertiary bg-tertiary-fixed p-1 rounded">schedule</span>
+</div>
+<div class="flex items-end gap-stack-sm">
+<span class="font-headline-xl text-headline-xl text-on-background">4.2h</span>
+<span class="font-body-md text-body-md text-error flex items-center mb-1">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span> 0.5h
+                            </span>
+</div>
+</div>
+</div>
+<!-- Charts Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Line Chart (Weekly Activity) -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm">
+<div class="flex justify-between items-center mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-background">Weekly Activity</h2>
+<select class="bg-surface text-on-surface border border-outline-variant rounded px-2 py-1 font-body-md text-body-md focus:outline-none focus:border-primary">
+<option>Last 7 Days</option>
+<option>Last 30 Days</option>
+</select>
+</div>
+<div class="w-full h-64 relative">
+<canvas id="activityChart"></canvas>
+</div>
+</div>
+<!-- Workload & Task Completion -->
+<div class="flex flex-col gap-gutter">
+<!-- Pie Chart (Workload Distribution) -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-surface-variant shadow-sm flex-grow flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-background mb-stack-md">Workload Distribution</h2>
+<div class="relative flex-grow flex justify-center items-center">
+<canvas class="max-h-48" id="workloadChart"></canvas>
+</div>
+</div>
+<!-- Progress Ring (Task Completion Rate) -->
+<div class="bg-surface-container-lowest p-stack-lg rounded-lg border border-primary/20 shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-primary-fixed to-transparent opacity-30"></div>
+<h2 class="font-headline-md text-headline-md text-on-background mb-stack-sm relative z-10">Task Completion</h2>
+<div class="flex items-center gap-stack-lg relative z-10">
+<div class="w-20 h-20 relative">
+<!-- Simple CSS based progress ring -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary-container" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="85, 100" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-label-md text-label-md font-bold text-primary-container">85%</span>
+</div>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+<p class="mb-1"><span class="text-on-background font-medium">71</span> completed</p>
+<p><span class="text-on-background font-medium">13</span> pending</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Chart Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup Activity Chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            
+            // Create a gradient for the line chart fill
+            let gradient = activityCtx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 82, 204, 0.2)'); // primary-container color with opacity
+            gradient.addColorStop(1, 'rgba(0, 82, 204, 0)');
+
+            new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Emails Handled',
+                        data: [120, 190, 150, 220, 180, 250, 130],
+                        borderColor: '#0052cc', // primary-container
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#0052cc',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e1e3e4', // surface-variant
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                color: '#434654', // on-surface-variant
+                                font: { family: 'Inter', size: 12 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#434654',
+                                font: { family: 'Inter', size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Setup Workload Chart
+            const workloadCtx = document.getElementById('workloadChart').getContext('2d');
+            new Chart(workloadCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High Priority', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [30, 50, 20],
+                        backgroundColor: [
+                            '#003d9b', // primary
+                            '#4c5e83', // secondary
+                            '#d7e2ff'  // secondary-fixed
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#191c1d',
+                                font: { family: 'Inter', size: 12 },
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

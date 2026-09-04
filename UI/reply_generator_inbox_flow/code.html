@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Reply Generator - Inbox Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#006477",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary": "#003d9b",
+                        "surface-dim": "#d9dadb",
+                        "on-error": "#ffffff",
+                        "outline": "#737685",
+                        "on-tertiary-container": "#76e2ff",
+                        "tertiary-fixed-dim": "#48d7f9",
+                        "secondary": "#4c5e83",
+                        "on-primary-fixed": "#001848",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-fixed": "#afecff",
+                        "secondary-container": "#bfd2fd",
+                        "on-tertiary-fixed-variant": "#004e5d",
+                        "surface-container": "#edeeef",
+                        "surface": "#f8f9fa",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-surface": "#2e3132",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#041b3c",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#34476a",
+                        "primary-container": "#0052cc",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1d",
+                        "background": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#434654",
+                        "surface-variant": "#e1e3e4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary-container": "#475a7e",
+                        "tertiary": "#004b59",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed-dim": "#b4c7f1",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary-fixed": "#dae2ff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack-sm": "8px",
+                        "container-padding-desktop": "32px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "unit": "4px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "headline-xl": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "label-sm": ["11px", { lineHeight: "14px", fontWeight: "500" }],
+                        "headline-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-stack-lg fixed left-0 top-0 h-screen w-[240px] bg-surface-container-lowest dark:bg-inverse-surface border-r border-surface-variant dark:border-outline-variant shadow-sm z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary font-headline-md">
+                IF
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary leading-tight">Inbox Flow</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">AI Productivity</p>
+</div>
+</div>
+<div class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary dark:text-inverse-primary font-bold border-r-4 border-primary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[20px]">inbox</span>
+<span class="font-body-md text-body-md">Inbox</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">checklist</span>
+<span class="font-body-md text-body-md">Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">event</span>
+<span class="font-body-md text-body-md">Deadlines</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">repeat</span>
+<span class="font-body-md text-body-md">Follow-ups</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+<div class="px-gutter mt-auto">
+<button class="w-full py-2 bg-[#DEEBFF] text-primary-container font-label-md text-label-md rounded-lg flex items-center justify-center gap-2 border border-blue-200 hover:bg-blue-100 transition">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                AI Copilot
+            </button>
+</div>
+</nav>
+<!-- Main Content Area (Fluid) -->
+<div class="flex-1 flex flex-col md:ml-[240px] h-screen bg-background relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-container-padding-desktop fixed top-0 right-0 w-[calc(100%-240px)] h-16 bg-surface-container-lowest dark:bg-inverse-surface border-b border-surface-variant dark:border-outline-variant z-10">
+<div class="flex-1"></div> <!-- Empty spacer for left-aligned search if present, but JSON says on_left -->
+<div class="flex-1 flex items-center">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface rounded-full border border-surface-variant focus:border-primary-container focus:ring-1 focus:ring-primary-container font-body-md text-body-md outline-none transition-colors" placeholder="Search Inbox Flow..." type="text"/>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-end gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">smart_toy</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-surface-variant cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a user profile avatar. Bright, clean lighting against a neutral background. The subject is slightly smiling. Corporate modernism style, suitable for a minimalist SaaS platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTRVamn4309rvXQVPIwDjg2n5hhQ-2Kj5XRc87sIb-MD5pBi-H7D1l955mAU2f3ZL6QftvXNRdKGsQFl4suH1k9ITgumaN9PDVEBPmvQVPJGLGrZxHLSXh7VtB1i9Pn7cvaiCHgIZMcOBjtaCMBlTYuqgDZfbdcFDtoS2M4zOGug5Za93sjjM42COIwM9IMshaT5F_QGlVqSb6f2uti4fHnOKfm0-n3riIeKkbiFOOyKqLcV_Md8c6"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 pt-16 overflow-y-auto">
+<div class="max-w-4xl mx-auto px-container-padding-desktop py-stack-lg flex flex-col gap-stack-lg h-full pb-32">
+<!-- Header -->
+<div class="flex items-center gap-3 border-b border-surface-variant pb-stack-sm">
+<button class="text-on-surface-variant hover:text-primary transition p-1 rounded-full hover:bg-surface">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Generate Reply - Sarah Jenkins <span class="text-on-surface-variant font-headline-md text-headline-md font-normal">(CEO)</span></h2>
+</div>
+<!-- Conversation Context -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-stack-md shadow-sm">
+<div class="flex items-center gap-2 mb-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Conversation Context</span>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Yesterday, 4:30 PM - You</span>
+<p class="font-body-md text-body-md text-on-surface bg-surface p-3 rounded-lg border border-surface-variant inline-block max-w-[90%]">
+                                Hi Sarah, here is the preliminary report for Q3. We are seeing a slight dip in engagement on the main dashboard. I'm investigating the root cause.
+                            </p>
+</div>
+<div class="flex flex-col gap-1 items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Today, 9:15 AM - Sarah Jenkins</span>
+<p class="font-body-md text-body-md text-on-surface bg-blue-50 border border-blue-100 p-3 rounded-lg inline-block max-w-[90%]">
+                                Thanks for the update. Let's schedule a 15-minute sync tomorrow to review your findings before the board meeting. Please bring actionable recommendations.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Tone Selector -->
+<div class="flex items-center gap-3 flex-wrap">
+<span class="font-label-md text-label-md text-on-surface-variant mr-2">Target Tone:</span>
+<button class="px-4 py-1.5 rounded-full border border-primary-container bg-[#DEEBFF] text-primary-container font-label-md text-label-md flex items-center gap-1 transition shadow-sm">
+<span class="material-symbols-outlined text-[16px]">business_center</span>
+                        Professional
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-surface-variant text-on-surface-variant hover:border-outline hover:text-on-surface font-label-md text-label-md flex items-center gap-1 transition bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[16px]">mood</span>
+                        Friendly
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-surface-variant text-on-surface-variant hover:border-outline hover:text-on-surface font-label-md text-label-md flex items-center gap-1 transition bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[16px]">short_text</span>
+                        Short
+                    </button>
+<button class="px-4 py-1.5 rounded-full border border-surface-variant text-on-surface-variant hover:border-outline hover:text-on-surface font-label-md text-label-md flex items-center gap-1 transition bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[16px]">gavel</span>
+                        Formal
+                    </button>
+</div>
+<!-- AI Generation Area -->
+<div class="flex-1 flex flex-col relative rounded-xl border border-[#b2c5ff] bg-surface-container-lowest overflow-hidden shadow-sm">
+<!-- AI Glow Top Border -->
+<div class="h-1 w-full bg-gradient-to-r from-primary-container to-[#48d7f9]"></div>
+<div class="p-4 border-b border-surface-variant flex justify-between items-center bg-[#f0f4ff]">
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined text-[20px] animate-pulse">auto_awesome</span>
+<span class="font-label-md text-label-md">AI Draft Ready</span>
+</div>
+</div>
+<textarea class="flex-1 w-full p-stack-md resize-none outline-none font-body-lg text-body-lg text-on-background bg-transparent" placeholder="AI generated response will appear here...">Hi Sarah,
+
+Thanks for getting back to me. I've dug into the engagement metrics and have identified a few key bottlenecks in the user flow on the main dashboard. 
+
+I have some actionable recommendations ready to share. I'll send over a calendar invite for a 15-minute sync tomorrow morning so we can review them before the board meeting.
+
+Best,
+[Your Name]</textarea>
+</div>
+</div>
+</main>
+<!-- Action Bar (Sticky Bottom) -->
+<div class="absolute bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-surface-variant px-container-padding-desktop py-4 flex flex-col gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+<div class="max-w-4xl w-full mx-auto flex justify-between items-center">
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg border border-surface-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface transition flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+                        Regenerate
+                    </button>
+<button class="px-4 py-2 rounded-lg border border-surface-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface transition flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg border border-surface-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface transition flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+                        Copy
+                    </button>
+<button class="px-6 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-on-primary-fixed-variant transition flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">send</span>
+                        Approve &amp; Send
+                    </button>
+</div>
+</div>
+<div class="max-w-4xl w-full mx-auto text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[12px] align-middle mr-1">info</span>
+                    AI assists but does not send automatically. Please review and approve this draft.
+                </p>
+</div>
+</div>
+</div>
+</body></html>

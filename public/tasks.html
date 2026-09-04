@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Tasks</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .task-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 200px 120px 100px 100px 40px;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--outline-v);
+      transition: background 0.12s;
+    }
+    .task-row:hover { background: var(--surface-low); }
+    .task-row.header {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--on-surface-v);
+      padding: 10px 20px;
+      background: var(--surface-low);
+    }
+    .status-select {
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-sm);
+      padding: 3px 6px;
+      font-size: 12px;
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      outline: none;
+    }
+    .status-select:focus { border-color: var(--primary-btn); }
+    #add-task-modal .modal-content {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--outline-v);
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div><div class="brand-name">Inbox Flow</div><div class="brand-sub">AI Productivity</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item active"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search tasks, emails..." id="task-search">
+      </div>
+      <div class="topbar-actions">
+        <div class="icon-btn"><i class="bi bi-bell"></i><span class="notification-dot"></span></div>
+        <div class="icon-btn" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 style="font-size:26px;font-weight:700;">Actionable Tasks</h1>
+          <span id="tasks-count" class="badge-cat" style="font-size:13px;margin-top:4px;display:inline-block;">Loading...</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn-ghost" id="filter-active" onclick="setFilter('pending')">Active</button>
+          <button class="btn-ghost" id="filter-completed" onclick="setFilter('completed')">Completed</button>
+          <button class="btn-ghost" id="filter-overdue" onclick="setFilter('overdue')">Overdue</button>
+          <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#add-task-modal">
+            <i class="bi bi-plus-lg"></i> Add Task
+          </button>
+        </div>
+      </div>
+
+      <!-- Task Table -->
+      <div class="card">
+        <div class="task-row header">
+          <span></span>
+          <span>Task Name</span>
+          <span>Source Email</span>
+          <span>Deadline</span>
+          <span>Priority</span>
+          <span>Status</span>
+          <span></span>
+        </div>
+        <div id="tasks-list">
+          <div class="empty-state"><span class="spinner"></span><p class="mt-3">Loading tasks...</p></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="add-task-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom:1px solid var(--outline-v);">
+        <h5 class="modal-title" style="font-weight:700;">Add New Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Task Name</label>
+          <input type="text" class="form-control" id="new-task-name" placeholder="Enter task...">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Deadline</label>
+          <input type="date" class="form-control" id="new-task-deadline">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Priority</label>
+          <select class="form-select" id="new-task-priority">
+            <option value="HIGH">High</option>
+            <option value="MEDIUM" selected>Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--outline-v);">
+        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary" onclick="addTask()"><i class="bi bi-check-lg"></i> Save Task</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script>
+let allTasks = [];
+let currentFilter = 'pending';
+
+function setFilter(f) {
+  currentFilter = f;
+  ['active','completed','overdue'].forEach(x => {
+    document.getElementById('filter-' + x)?.classList.remove('btn-primary');
+    document.getElementById('filter-' + x)?.classList.add('btn-ghost');
+  });
+  const map = { pending: 'active', completed: 'completed', overdue: 'overdue' };
+  if (map[f]) {
+    document.getElementById('filter-' + map[f])?.classList.remove('btn-ghost');
+    document.getElementById('filter-' + map[f])?.classList.add('btn-primary');
+  }
+  renderTasks();
+}
+
+async function loadTasks() {
+  try {
+    const { tasks } = await API.getTasks();
+    allTasks = tasks || [];
+    document.getElementById('tasks-count').textContent = `${allTasks.length} Total`;
+    renderTasks();
+  } catch(e) {
+    document.getElementById('tasks-list').innerHTML =
+      `<div class="empty-state"><i class="bi bi-exclamation-circle"></i><h3>Error loading tasks</h3><p>${e.message}</p><p style="font-size:12px;color:var(--on-surface-v);">Make sure Supabase is configured in .env</p></div>`;
+  }
+}
+
+function renderTasks() {
+  const search = document.getElementById('task-search').value.toLowerCase();
+  const now = new Date();
+  const filtered = allTasks.filter(t => {
+    if (search && !t.task_name?.toLowerCase().includes(search)) return false;
+    if (currentFilter === 'pending') return t.status !== 'completed';
+    if (currentFilter === 'completed') return t.status === 'completed';
+    if (currentFilter === 'overdue') return t.deadline && new Date(t.deadline) < now && t.status !== 'completed';
+    return true;
+  });
+
+  const list = document.getElementById('tasks-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><i class="bi bi-check2-all"></i><h3>No tasks here</h3><p>Tasks extracted from your emails will appear here.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(t => {
+    const isOverdue = t.deadline && new Date(t.deadline) < new Date() && t.status !== 'completed';
+    return `
+      <div class="task-row" id="task-${t.id}">
+        <input type="checkbox" class="form-check-input" ${t.status === 'completed' ? 'checked' : ''}
+          onchange="toggleTask('${t.id}', this.checked)">
+        <div>
+          <div style="font-size:14px;font-weight:600;${t.status==='completed'?'text-decoration:line-through;color:var(--on-surface-v)':''}">${t.task_name || t.name || 'Untitled'}</div>
+          ${t.ai_note ? `<span style="font-size:11px;color:var(--primary-btn);"><i class="bi bi-stars"></i> ${t.ai_note}</span>` : ''}
+        </div>
+        <div style="font-size:12px;color:var(--primary-btn);">
+          ${t.source_email ? `<i class="bi bi-envelope"></i> ${t.source_email.slice(0,28)}...` : '—'}
+        </div>
+        <div style="font-size:12px;${isOverdue?'color:var(--error);font-weight:600;':'color:var(--on-surface-v);'}">
+          ${t.deadline ? formatDate(t.deadline) : '—'}
+          ${isOverdue ? '<span class="badge-priority badge-HIGH ms-1">Overdue</span>' : ''}
+        </div>
+        <div>${priorityBadge(t.priority || 'MEDIUM')}</div>
+        <div>
+          <select class="status-select" onchange="changeStatus('${t.id}', this.value)">
+            <option value="pending" ${t.status==='pending'?'selected':''}>Pending</option>
+            <option value="in_progress" ${t.status==='in_progress'?'selected':''}>In Progress</option>
+            <option value="completed" ${t.status==='completed'?'selected':''}>Completed</option>
+          </select>
+        </div>
+        <div>
+          <button class="icon-btn" onclick="deleteTask('${t.id}')" title="Delete">
+            <i class="bi bi-trash" style="font-size:13px;color:var(--error);"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function toggleTask(id, checked) {
+  try {
+    await API.updateTask(id, { status: checked ? 'completed' : 'pending' });
+    const t = allTasks.find(x => x.id === id);
+    if (t) t.status = checked ? 'completed' : 'pending';
+    renderTasks();
+    showToast(checked ? 'Task completed!' : 'Task reopened', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function changeStatus(id, status) {
+  try {
+    await API.updateTask(id, { status });
+    const t = allTasks.find(x => x.id === id);
+    if (t) t.status = status;
+    showToast('Status updated', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function deleteTask(id) {
+  if (!confirm('Delete this task?')) return;
+  try {
+    await API.deleteTask(id);
+    allTasks = allTasks.filter(t => t.id !== id);
+    renderTasks();
+    showToast('Task deleted', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function addTask() {
+  const name = document.getElementById('new-task-name').value.trim();
+  if (!name) return showToast('Please enter a task name', 'error');
+  try {
+    const { task } = await API.createTask({
+      task_name: name,
+      deadline: document.getElementById('new-task-deadline').value || null,
+      priority: document.getElementById('new-task-priority').value,
+      status: 'pending'
+    });
+    allTasks.unshift(task);
+    renderTasks();
+    bootstrap.Modal.getInstance(document.getElementById('add-task-modal')).hide();
+    document.getElementById('new-task-name').value = '';
+    showToast('Task added!', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+document.getElementById('task-search').addEventListener('input', renderTasks);
+
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user.picture) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+  }
+  setFilter('pending');
+  await loadTasks();
+})();
+</script>
+</body>
+</html>
+

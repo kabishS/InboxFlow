@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Dashboard</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div>
+        <div class="brand-name">Inbox Flow</div>
+        <div class="brand-sub">AI Productivity</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item active" data-page="dashboard">
+        <i class="bi bi-grid"></i> Dashboard
+      </a>
+      <a href="/inbox" class="nav-item" data-page="inbox">
+        <i class="bi bi-inbox"></i> Inbox
+      </a>
+      <a href="/compose" class="nav-item" data-page="compose">
+        <i class="bi bi-pencil-square"></i> Compose & Compress
+      </a>
+      <a href="/tasks" class="nav-item" data-page="tasks">
+        <i class="bi bi-check2-square"></i> Tasks
+      </a>
+      <a href="/deadlines" class="nav-item" data-page="deadlines">
+        <i class="bi bi-calendar-event"></i> Deadlines
+      </a>
+      <a href="/followups" class="nav-item" data-page="followups">
+        <i class="bi bi-arrow-repeat"></i> Follow-ups
+      </a>
+      <a href="/spam" class="nav-item" data-page="spam">
+        <i class="bi bi-shield-x"></i> Spam Shield
+      </a>
+      <a href="/analytics" class="nav-item" data-page="analytics">
+        <i class="bi bi-bar-chart"></i> Analytics
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="/settings" class="nav-settings">
+        <i class="bi bi-gear"></i> Settings
+      </a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'">
+        <i class="bi bi-robot"></i> AI Copilot
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search emails, tasks..." id="global-search">
+      </div>
+      <div class="topbar-actions">
+        <div class="icon-btn" onclick="window.location.href='/settings'" title="Settings">
+          <i class="bi bi-gear"></i>
+        </div>
+        <div class="icon-btn" onclick="window.location.href='/copilot'" title="AI Copilot">
+          <i class="bi bi-robot"></i>
+        </div>
+        <div id="user-avatar">
+          <div class="avatar-placeholder">U</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+
+      <!-- Greeting Banner -->
+      <div class="ai-insight-box mb-4" id="greeting-banner">
+        <div class="d-flex align-items-start justify-content-between">
+          <div>
+            <h1 class="mb-1" style="font-size:26px;font-weight:700;" id="greeting-text">Good morning.</h1>
+            <p style="font-size:14px;color:var(--on-surface-v);margin:0;" id="greeting-sub">Loading your AI briefing...</p>
+          </div>
+          <i class="bi bi-stars" style="font-size:28px;color:var(--primary-btn);"></i>
+        </div>
+      </div>
+
+      <!-- AI Action Center -->
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:14px;">AI Action Center</h2>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3 mb-4" id="stats-row">
+        <!-- 1. Urgent Emails -->
+        <div class="col">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-envelope" style="color:#e53935;font-size:20px;"></i>
+                <span class="badge-priority badge-HIGH">Urgent</span>
+              </div>
+              <div class="stat-label">Urgent Emails</div>
+              <div class="stat-number" id="stat-urgent">
+                <span class="loading-skeleton d-inline-block" style="width:40px;height:36px;"></span>
+              </div>
+            </div>
+            <a href="/inbox" class="d-block mt-3" style="font-size:13px;font-weight:600;color:var(--primary-btn);">Review →</a>
+          </div>
+        </div>
+
+        <!-- 2. Tasks -->
+        <div class="col">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-check2-circle" style="color:var(--primary-btn);font-size:20px;"></i>
+                <span class="badge-cat">Action Req</span>
+              </div>
+              <div class="stat-label">Tasks</div>
+              <div class="stat-number" id="stat-tasks">
+                <span class="loading-skeleton d-inline-block" style="width:40px;height:36px;"></span>
+              </div>
+            </div>
+            <a href="/tasks" class="d-block mt-3" style="font-size:13px;font-weight:600;color:var(--primary-btn);">Review →</a>
+          </div>
+        </div>
+
+        <!-- 3. Deadlines -->
+        <div class="col">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-alarm" style="color:var(--secondary);font-size:20px;"></i>
+                <span class="badge-cat">Due Soon</span>
+              </div>
+              <div class="stat-label">Deadlines</div>
+              <div class="stat-number" id="stat-deadlines">
+                <span class="loading-skeleton d-inline-block" style="width:40px;height:36px;"></span>
+              </div>
+            </div>
+            <a href="/deadlines" class="d-block mt-3" style="font-size:13px;font-weight:600;color:var(--primary-btn);">Review →</a>
+          </div>
+        </div>
+
+        <!-- 4. Replies Needed -->
+        <div class="col">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-reply" style="color:var(--on-surface-v);font-size:20px;"></i>
+                <span class="badge-cat">Waiting</span>
+              </div>
+              <div class="stat-label">Replies Needed</div>
+              <div class="stat-number" id="stat-replies">
+                <span class="loading-skeleton d-inline-block" style="width:40px;height:36px;"></span>
+              </div>
+            </div>
+            <a href="/followups" class="d-block mt-3" style="font-size:13px;font-weight:600;color:var(--primary-btn);">Review →</a>
+          </div>
+        </div>
+
+        <!-- 5. Spam / Phishing Shield -->
+        <div class="col">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <i class="bi bi-shield-x" style="color:#d32f2f;font-size:20px;"></i>
+                <span class="badge-priority badge-HIGH">Shield</span>
+              </div>
+              <div class="stat-label">Spam Blocked</div>
+              <div class="stat-number" id="stat-spam" style="color:#d32f2f;">
+                <span class="loading-skeleton d-inline-block" style="width:40px;height:36px;"></span>
+              </div>
+            </div>
+            <a href="/spam" class="d-block mt-3" style="font-size:13px;font-weight:600;color:var(--primary-btn);">Review →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent High Priority Emails Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 style="font-size:18px;font-weight:700;margin:0;">Recent High Priority</h2>
+        <a href="/inbox" class="btn-secondary" style="padding:6px 14px;font-size:13px;">View All Inbox →</a>
+      </div>
+
+      <!-- Recent High Priority Emails List -->
+      <div class="card" id="recent-emails">
+        <div style="padding:40px;text-align:center;color:var(--on-surface-v);">
+          <span class="spinner"></span>
+          <p class="mt-2">Loading emails...</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<script src="/js/api.js"></script>
+<script>
+(async () => {
+  // Auth check
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+
+  // Greeting
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting-text').textContent = `${greet}, ${user.name.split(' ')[0]}.`;
+
+  // User avatar
+  if (user.picture) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar" alt="${user.name}">`;
+  } else {
+    document.getElementById('user-avatar').innerHTML = `<div class="avatar-placeholder">${getInitials(user.name)}</div>`;
+  }
+
+  // Load analytics & spam
+  try {
+    const data = await API.getAnalytics();
+    document.getElementById('stat-tasks').textContent = data.tasks_pending || 0;
+    document.getElementById('stat-deadlines').textContent = data.deadlines_total || 0;
+    document.getElementById('stat-replies').textContent = data.followups_active || 0;
+  } catch(e) {
+    ['stat-tasks','stat-deadlines','stat-replies'].forEach(id => {
+      document.getElementById(id).textContent = '0';
+    });
+  }
+
+  try {
+    const spamData = await API.get('/api/spam');
+    document.getElementById('stat-spam').textContent = spamData.counts?.total || spamData.spam?.length || 0;
+  } catch(e) {
+    document.getElementById('stat-spam').textContent = '0';
+  }
+
+  // Load recent emails
+  try {
+    const { threads } = await API.getThreads({ maxResults: 5 });
+    const urgentCount = threads.filter(t => t.ai?.priority === 'HIGH').length;
+    document.getElementById('stat-urgent').textContent = urgentCount;
+
+    const total = threads.filter(t => t.ai?.priority === 'HIGH').length;
+    document.getElementById('greeting-sub').innerHTML =
+      `AI has prioritized <strong style="color:var(--primary-btn)">${total} urgent item${total !== 1 ? 's' : ''}</strong> for you today.`;
+
+    const container = document.getElementById('recent-emails');
+    if (!threads.length) {
+      container.innerHTML = `<div class="empty-state"><i class="bi bi-inbox"></i><h3>Inbox Empty</h3><p>No emails found.</p></div>`;
+      return;
+    }
+
+    container.innerHTML = threads.slice(0, 5).map(t => {
+      const sender = t.from.replace(/<.*>/,'').trim();
+      const priority = t.ai?.priority || 'MEDIUM';
+      return `
+        <div class="email-row" onclick="window.location.href='/thread?id=${t.id}'">
+          <div class="avatar-email">${getInitials(sender)}</div>
+          <div style="width:130px;flex-shrink:0;">
+            <div class="email-from" style="font-size:13px;font-weight:600;">${sender.slice(0,16)}</div>
+            ${priorityBadge(priority)}
+          </div>
+          <div class="email-info">
+            <div class="email-subject">${t.subject.slice(0,50)}</div>
+            <div class="email-snippet">${t.snippet.slice(0,75)}...</div>
+          </div>
+          <div class="email-meta">
+            <div>${timeAgo(t.date)}</div>
+            ${t.ai?.category ? `<span class="badge-cat mt-1">${t.ai.category}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    document.getElementById('recent-emails').innerHTML = `
+      <div class="empty-state"><i class="bi bi-exclamation-circle"></i><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Deadlines</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .deadline-item {
+      background: var(--surface);
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow 0.15s;
+    }
+    .deadline-item:hover { box-shadow: var(--shadow-hover); }
+    .deadline-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--ai-tint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-header.overdue { color: var(--error); }
+    .section-header.today { color: var(--tertiary); }
+    .section-header.upcoming { color: var(--secondary); }
+
+    .view-toggle-btn {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--outline-v);
+      background: var(--surface);
+      color: var(--on-surface-v);
+      cursor: pointer;
+    }
+    .view-toggle-btn.active {
+      background: var(--primary-btn);
+      color: #fff;
+      border-color: var(--primary-btn);
+    }
+    .view-toggle-btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+    .view-toggle-btn:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+    .daily-report-box {
+      background: var(--ai-tint);
+      border: 1px solid rgba(0, 82, 204, 0.2);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+
+    /* Explicit 7-Column Calendar Grid Styling */
+    .calendar-view-container {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .calendar-grid-header {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--on-surface-v);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--outline-v);
+    }
+    .calendar-grid-days {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      gap: 6px !important;
+      padding-top: 12px;
+    }
+    .calendar-day {
+      min-height: 90px;
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .calendar-day:hover {
+      background: var(--surface-low);
+      border-color: var(--primary-btn);
+      transform: translateY(-1px);
+    }
+    .calendar-day.other-month {
+      opacity: 0.35;
+      background: var(--surface-low);
+    }
+    .calendar-day.today {
+      border: 2px solid var(--primary-btn) !important;
+      background: var(--ai-tint);
+    }
+    .calendar-day-num {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .calendar-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+    .calendar-badge.high { background: rgba(186,26,26,0.15); color: #ba1a1a; }
+    .calendar-badge.medium { background: rgba(245,124,0,0.15); color: #e65100; }
+    .calendar-badge.low { background: rgba(46,125,50,0.15); color: #2e7d32; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div><div class="brand-name">Inbox Flow</div><div class="brand-sub">AI Productivity</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-page="dashboard"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item" data-page="inbox"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item" data-page="tasks"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item active" data-page="deadlines"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item" data-page="followups"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item" data-page="analytics"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="/settings" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="search-bar" style="max-width:none;flex:0;">
+        <h1 style="font-size:24px;font-weight:700;white-space:nowrap;">Deadline Tracker</h1>
+      </div>
+      <div class="topbar-actions ms-auto">
+        <!-- View Toggle -->
+        <div class="d-inline-flex me-2">
+          <button class="view-toggle-btn active" id="toggle-list-btn" onclick="switchView('list')">
+            <i class="bi bi-list-ul"></i> List
+          </button>
+          <button class="view-toggle-btn" id="toggle-cal-btn" onclick="switchView('calendar')">
+            <i class="bi bi-calendar3"></i> Calendar
+          </button>
+        </div>
+
+        <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#add-deadline-modal">
+          <i class="bi bi-plus-lg"></i> Add Deadline
+        </button>
+        <button class="btn-ghost" onclick="syncDeadlines()" id="sync-btn">
+          <i class="bi bi-arrow-repeat"></i> Sync from Inbox
+        </button>
+        <div class="icon-btn" onclick="window.location.href='/settings'"><i class="bi bi-gear"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- 1:00 PM Daily Briefing & Standup Report Banner -->
+      <div class="daily-report-box">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <i class="bi bi-clock-history" style="color:var(--primary-btn);font-size:18px;"></i>
+              <strong style="font-size:15px;">1:00 PM Daily Briefing & Status Report</strong>
+              <span class="badge-cat">AI Standup</span>
+            </div>
+            <p style="font-size:13px;color:var(--on-surface-v);margin:0;" id="report-summary-text">
+              Track your finished tasks and generate an executive status report for your team.
+            </p>
+          </div>
+          <button class="btn-secondary" id="generate-report-btn" onclick="generateReport()">
+            <i class="bi bi-stars"></i> Generate 1 PM Report
+          </button>
+        </div>
+
+        <div id="report-output-area" style="display:none;margin-top:16px;">
+          <hr style="border-color:var(--outline-v);">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span style="font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--primary-btn);text-transform:uppercase;">
+              <i class="bi bi-stars"></i> Executive Daily Report Ready
+            </span>
+            <div class="d-flex gap-2">
+              <button class="btn-ghost" style="padding:3px 10px;font-size:12px;" onclick="copyReport()">
+                <i class="bi bi-clipboard"></i> Copy Report
+              </button>
+              <button class="btn-ghost" style="padding:3px 10px;font-size:12px;" onclick="document.getElementById('report-output-area').style.display='none'">
+                Close
+              </button>
+            </div>
+          </div>
+          <textarea class="form-control" id="daily-report-content" rows="7" style="font-size:13px;line-height:1.6;font-family:var(--font);background:var(--surface);"></textarea>
+        </div>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="row g-4">
+        <!-- Timeline sidebar -->
+        <div class="col-md-3">
+          <div class="card mb-3" style="padding:20px;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+              <i class="bi bi-hourglass-split"></i> Timeline Overview
+            </div>
+            <div id="timeline-overview">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="timeline-dot" style="background:#e53935;"></div>
+                <div><div style="font-size:11px;font-weight:700;color:#e53935;letter-spacing:.05em;">PAST DUE</div><div id="tl-overdue" style="font-size:13px;font-weight:500;">Loading...</div></div>
+              </div>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="timeline-dot" style="background:#2e7d32;"></div>
+                <div><div style="font-size:11px;font-weight:700;color:#2e7d32;letter-spacing:.05em;">TODAY</div><div id="tl-today" style="font-size:13px;font-weight:500;">Loading...</div></div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="timeline-dot" style="background:var(--primary-btn);"></div>
+                <div><div style="font-size:11px;font-weight:700;color:var(--primary-btn);letter-spacing:.05em;">LATER THIS WEEK</div><div id="tl-week" style="font-size:13px;font-weight:500;">Loading...</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;">💡 Pro Tip</div>
+            <p style="font-size:12px;color:var(--on-surface-v);margin:0;">
+              Switch to <strong>Calendar View</strong> to click on any date and schedule deadlines directly.
+            </p>
+          </div>
+        </div>
+
+        <!-- Content Area: List View vs Calendar View -->
+        <div class="col-md-9">
+
+          <!-- 1. List View Container -->
+          <div id="list-view-container">
+            <div id="deadlines-container">
+              <div class="empty-state"><span class="spinner"></span><p class="mt-3">Loading deadlines...</p></div>
+            </div>
+          </div>
+
+          <!-- 2. Calendar View Container -->
+          <div id="calendar-view-container" style="display:none;" class="calendar-view-container">
+            <div class="calendar-header">
+              <h3 style="font-size:18px;font-weight:700;margin:0;" id="cal-month-title">September 2026</h3>
+              <div class="d-flex gap-2">
+                <button class="btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="prevMonth()"><i class="bi bi-chevron-left"></i></button>
+                <button class="btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="nextMonth()"><i class="bi bi-chevron-right"></i></button>
+                <button class="btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="todayMonth()">Today</button>
+              </div>
+            </div>
+
+            <div class="calendar-grid-header">
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+
+            <div class="calendar-grid-days" id="calendar-days-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add Deadline Modal -->
+<div class="modal fade" id="add-deadline-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background:var(--surface);border:1px solid var(--outline-v);border-radius:var(--radius-lg);">
+      <div class="modal-header" style="border-bottom:1px solid var(--outline-v);">
+        <h5 class="modal-title" style="font-weight:700;">Add Deadline / Action Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Deadline Title</label>
+          <input type="text" class="form-control" id="new-dl-title" placeholder="e.g., Submit Q3 Report Deck">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Source Email / Context</label>
+          <input type="text" class="form-control" id="new-dl-source" placeholder="e.g., Sarah Jenkins (Re: Board Meeting)">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Due Date</label>
+          <input type="date" class="form-control" id="new-dl-date">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Priority</label>
+          <select class="form-select" id="new-dl-priority">
+            <option value="HIGH">High</option>
+            <option value="MEDIUM" selected>Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--outline-v);">
+        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary" onclick="saveManualDeadline()"><i class="bi bi-check-lg"></i> Save Deadline</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script>
+let allDeadlines = [];
+let currentCalDate = new Date();
+
+function switchView(view) {
+  if (view === 'calendar') {
+    document.getElementById('list-view-container').style.display = 'none';
+    document.getElementById('calendar-view-container').style.display = 'block';
+    document.getElementById('toggle-list-btn').classList.remove('active');
+    document.getElementById('toggle-cal-btn').classList.add('active');
+    renderCalendar();
+  } else {
+    document.getElementById('list-view-container').style.display = 'block';
+    document.getElementById('calendar-view-container').style.display = 'none';
+    document.getElementById('toggle-cal-btn').classList.remove('active');
+    document.getElementById('toggle-list-btn').classList.add('active');
+  }
+}
+
+async function syncDeadlines() {
+  const btn = document.getElementById('sync-btn');
+  btn.innerHTML = '<span class="spinner"></span> Scanning...';
+  btn.disabled = true;
+  try {
+    const result = await API.syncDeadlines();
+    showToast(`Synced ${result.synced} deadlines from inbox`, 'success');
+    await loadDeadlines();
+  } catch(e) {
+    showToast('Sync failed: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Sync from Inbox';
+    btn.disabled = false;
+  }
+}
+
+async function loadDeadlines() {
+  try {
+    const { deadlines } = await API.getDeadlines();
+    allDeadlines = deadlines || [];
+    renderDeadlines(allDeadlines);
+    renderCalendar();
+  } catch(e) {
+    document.getElementById('deadlines-container').innerHTML =
+      `<div class="empty-state"><i class="bi bi-exclamation-circle"></i><h3>Error</h3><p>${e.message}</p><button class="btn-primary mt-3" onclick="syncDeadlines()"><i class="bi bi-arrow-repeat"></i> Sync from Inbox</button></div>`;
+  }
+}
+
+function renderDeadlines(deadlines) {
+  const now = new Date();
+  const today = new Date(); today.setHours(23, 59, 59, 999);
+
+  const overdue = deadlines.filter(d => new Date(d.due_date) < now && d.status !== 'completed');
+  const todayItems = deadlines.filter(d => {
+    const dd = new Date(d.due_date);
+    return dd >= now && dd <= today && d.status !== 'completed';
+  });
+  const upcoming = deadlines.filter(d => new Date(d.due_date) > today && d.status !== 'completed');
+
+  // Update timeline
+  document.getElementById('tl-overdue').textContent = overdue.length ? overdue.map(d => d.title).slice(0,2).join(', ') : 'None';
+  document.getElementById('tl-today').textContent = todayItems.length ? todayItems.map(d => d.title).slice(0,2).join(', ') : 'None';
+  document.getElementById('tl-week').textContent = upcoming.length ? `${upcoming.length} Task${upcoming.length !== 1 ? 's' : ''} Pending` : 'None';
+
+  const container = document.getElementById('deadlines-container');
+
+  if (!deadlines.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-calendar-check"></i>
+        <h3>No Deadlines Found</h3>
+        <p>Click "Sync from Inbox" to scan your emails, or click "Add Deadline" to create one.</p>
+        <button class="btn-primary mt-3" onclick="syncDeadlines()"><i class="bi bi-arrow-repeat"></i> Sync from Inbox</button>
+      </div>`;
+    return;
+  }
+
+  const icons = { 'HIGH': 'bi-exclamation-circle', 'MEDIUM': 'bi-clock', 'LOW': 'bi-calendar' };
+  const renderGroup = (items, cls, label, icon) => {
+    if (!items.length) return '';
+    return `
+      <div class="section-header ${cls}"><i class="bi ${icon}"></i> ${label}</div>
+      ${items.map(d => {
+        const dDate = new Date(d.due_date);
+        const diffDays = Math.round((dDate - now) / 86400000);
+        const timeLabel = d.due_label || (diffDays < 0 ? `${Math.abs(diffDays)} days ago` : diffDays === 0 ? 'Today' : `In ${diffDays} day${diffDays !== 1 ? 's' : ''}`);
+        const isOverdue = dDate < now;
+        return `
+          <div class="deadline-item" id="dl-item-${d.id}">
+            <input type="checkbox" class="form-check-input flex-shrink-0" ${d.status === 'completed' ? 'checked' : ''}
+              onchange="toggleDeadlineStatus('${d.id}', this.checked)" title="Mark Finished">
+            <div class="deadline-icon"><i class="bi ${icons[d.priority] || 'bi-clock'}" style="color:var(--primary-btn);"></i></div>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:600;${d.status==='completed'?'text-decoration:line-through;opacity:0.6;':''}">${d.title}</div>
+              <div style="font-size:12px;color:var(--on-surface-v);">
+                <i class="bi bi-envelope"></i> ${d.source_email || 'Email Thread'} ${d.from_email ? `• ${d.from_email}` : ''}
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:13px;font-weight:600;color:${isOverdue?'var(--error)':diffDays<=1?'var(--error)':'var(--on-surface-v)'};">${timeLabel}</div>
+              ${isOverdue ? '<span class="badge-priority badge-HIGH mt-1 d-inline-block">Action Required</span>' : ''}
+            </div>
+            <button class="icon-btn" onclick="deleteDeadlineItem('${d.id}')" title="Delete">
+              <i class="bi bi-trash" style="font-size:13px;color:var(--error);"></i>
+            </button>
+          </div>
+        `;
+      }).join('')}
+      <div style="margin-bottom:24px;"></div>
+    `;
+  };
+
+  container.innerHTML =
+    renderGroup(overdue, 'overdue', 'OVERDUE', 'bi-exclamation-triangle') +
+    renderGroup(todayItems, 'today', 'APPROACHING — TODAY', 'bi-alarm') +
+    renderGroup(upcoming, 'upcoming', 'UPCOMING', 'bi-calendar3');
+}
+
+// ─── Interactive Calendar Renderer ───────────────────────────
+function renderCalendar() {
+  const year = currentCalDate.getFullYear();
+  const month = currentCalDate.getMonth();
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  document.getElementById('cal-month-title').textContent = `${monthNames[month]} ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const grid = document.getElementById('calendar-days-grid');
+  grid.innerHTML = '';
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  // Prev month filler
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const dayNum = daysInPrevMonth - i;
+    grid.innerHTML += `<div class="calendar-day other-month"><div class="calendar-day-num">${dayNum}</div></div>`;
+  }
+
+  // Current month days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const isToday = dateStr === todayStr;
+
+    // Find matching deadlines for this date
+    const dayDeadlines = allDeadlines.filter(d => {
+      if (!d.due_date) return false;
+      return d.due_date.slice(0, 10) === dateStr;
+    });
+
+    const badgesHtml = dayDeadlines.map(d => {
+      const pClass = (d.priority || 'medium').toLowerCase();
+      return `<span class="calendar-badge ${pClass}" title="${d.title}">${d.title}</span>`;
+    }).join('');
+
+    grid.innerHTML += `
+      <div class="calendar-day ${isToday ? 'today' : ''}" onclick="openAddModalForDate('${dateStr}')">
+        <div class="calendar-day-num">${day}</div>
+        ${badgesHtml}
+      </div>
+    `;
+  }
+}
+
+function prevMonth() {
+  currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+  renderCalendar();
+}
+
+function nextMonth() {
+  currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+  renderCalendar();
+}
+
+function todayMonth() {
+  currentCalDate = new Date();
+  renderCalendar();
+}
+
+function openAddModalForDate(dateStr) {
+  document.getElementById('new-dl-date').value = dateStr;
+  const modal = new bootstrap.Modal(document.getElementById('add-deadline-modal'));
+  modal.show();
+}
+
+async function saveManualDeadline() {
+  const title = document.getElementById('new-dl-title').value.trim();
+  const date = document.getElementById('new-dl-date').value;
+  const source = document.getElementById('new-dl-source').value.trim();
+  const priority = document.getElementById('new-dl-priority').value;
+
+  if (!title) return showToast('Please enter a deadline title', 'error');
+
+  try {
+    const { deadline } = await API.createDeadline({
+      title,
+      source_email: source || 'Manual Entry',
+      due_date: date || new Date().toISOString(),
+      priority,
+      status: 'pending'
+    });
+    allDeadlines.push(deadline);
+    renderDeadlines(allDeadlines);
+    renderCalendar();
+    bootstrap.Modal.getInstance(document.getElementById('add-deadline-modal')).hide();
+    document.getElementById('new-dl-title').value = '';
+    showToast('Deadline added!', 'success');
+  } catch(e) {
+    showToast('Failed to save: ' + e.message, 'error');
+  }
+}
+
+async function toggleDeadlineStatus(id, checked) {
+  try {
+    await API.updateDeadline(id, { status: checked ? 'completed' : 'pending' });
+    const item = allDeadlines.find(x => x.id === id);
+    if (item) item.status = checked ? 'completed' : 'pending';
+    renderDeadlines(allDeadlines);
+    renderCalendar();
+    showToast(checked ? 'Marked task finished!' : 'Reopened deadline', 'success');
+  } catch(e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function deleteDeadlineItem(id) {
+  if (!confirm('Delete this deadline?')) return;
+  try {
+    await API.deleteDeadline(id);
+    allDeadlines = allDeadlines.filter(x => x.id !== id);
+    renderDeadlines(allDeadlines);
+    renderCalendar();
+    showToast('Deadline deleted', 'success');
+  } catch(e) {
+    showToast(e.message, 'error');
+  }
+}
+
+// ─── 1:00 PM Daily Briefing & Status Report ──────────────────
+async function generateReport() {
+  const btn = document.getElementById('generate-report-btn');
+  btn.innerHTML = '<span class="spinner"></span> Drafting Report...';
+  btn.disabled = true;
+  try {
+    const { report } = await API.generateDailyReport();
+    document.getElementById('daily-report-content').value = report;
+    document.getElementById('report-output-area').style.display = 'block';
+    showToast('1:00 PM Standup Report generated with AI!', 'success');
+  } catch(e) {
+    showToast('Failed to generate report: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = '<i class="bi bi-stars"></i> Generate 1 PM Report';
+    btn.disabled = false;
+  }
+}
+
+function copyReport() {
+  const text = document.getElementById('daily-report-content').value;
+  navigator.clipboard.writeText(text).then(() => showToast('Report copied to clipboard!', 'success'));
+}
+
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user.picture) document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+  await loadDeadlines();
+})();
+</script>
+</body>
+</html>

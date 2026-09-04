@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inbox Flow - AI Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#006477",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-background": "#191c1d",
+                    "on-primary-fixed-variant": "#0040a2",
+                    "primary": "#003d9b",
+                    "surface-dim": "#d9dadb",
+                    "on-error": "#ffffff",
+                    "outline": "#737685",
+                    "on-tertiary-container": "#76e2ff",
+                    "tertiary-fixed-dim": "#48d7f9",
+                    "secondary": "#4c5e83",
+                    "on-primary-fixed": "#001848",
+                    "secondary-fixed": "#d7e2ff",
+                    "on-primary-container": "#c4d2ff",
+                    "tertiary-fixed": "#afecff",
+                    "secondary-container": "#bfd2fd",
+                    "on-tertiary-fixed-variant": "#004e5d",
+                    "surface-container": "#edeeef",
+                    "surface": "#f8f9fa",
+                    "inverse-primary": "#b2c5ff",
+                    "inverse-surface": "#2e3132",
+                    "surface-tint": "#0c56d0",
+                    "on-secondary-fixed": "#041b3c",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary-fixed-variant": "#34476a",
+                    "primary-container": "#0052cc",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "on-surface": "#191c1d",
+                    "background": "#f8f9fa",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#434654",
+                    "surface-variant": "#e1e3e4",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#001f27",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "on-secondary-container": "#475a7e",
+                    "tertiary": "#004b59",
+                    "outline-variant": "#c3c6d6",
+                    "secondary-fixed-dim": "#b4c7f1",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#b2c5ff",
+                    "primary-fixed": "#dae2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "gutter": "24px",
+                    "container-padding-mobile": "16px",
+                    "stack-lg": "24px",
+                    "stack-md": "16px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #FAFBFC; } /* Base elevation 0 */
+        .ai-focus { background-color: #DEEBFF; }
+        .ai-border { border-image: linear-gradient(to right, #0052CC, #48d7f9) 1; }
+    </style>
+</head>
+<body class="h-full bg-background text-on-surface font-body-md antialiased overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest text-primary font-body-md fixed left-0 top-0 h-screen w-[240px] border-r border-surface-variant shadow-sm flex-col h-full py-stack-lg z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-stack-sm">
+<div class="w-8 h-8 rounded bg-primary-container text-on-primary flex items-center justify-center font-bold">IF</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Inbox Flow</h1>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI Productivity</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-stack-md flex flex-col gap-unit">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-primary font-bold border-r-4 border-primary hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined fill" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="inbox">inbox</span>
+                Inbox
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="checklist">checklist</span>
+                Tasks
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+                Deadlines
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="repeat">repeat</span>
+                Follow-ups
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- TopAppBar & Main Content Wrapper -->
+<div class="flex-1 md:ml-[240px] flex flex-col h-screen overflow-hidden relative">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest text-primary font-body-lg fixed top-0 right-0 w-full md:w-[calc(100%-240px)] h-16 border-b border-surface-variant flat flex justify-between items-center px-container-padding-desktop z-10">
+<div class="flex items-center gap-stack-md md:hidden">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary">Inbox Flow</span>
+</div>
+<div class="hidden md:flex flex-1 max-w-md items-center bg-surface-container-low rounded-lg px-stack-md py-stack-sm border border-transparent focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-stack-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none w-full text-on-surface placeholder-on-surface-variant focus:ring-0 p-0 text-body-md font-body-md" placeholder="Search emails, tasks..." type="text"/>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container overflow-hidden border border-surface-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a person in modern corporate attire, neutral lighting, minimalist background, high quality portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXI5xIsJ16Zid2UWMmuT0YxSl6tO9noLh5eRLO-jXc4NDii3UZhFn8adM5oPJ74sYHhqIWEX4c1vHxD7ZGa-GKH2K9GHcfOsrAVkH4CXEFZ1IXRn5UJs9b4N5Bqd55fi2hu9jJ6ZvhZ1zxfMwCWkyCEQdrp1l_09VVNbmDzsCZYgPV6QCR2d3cSJa0b0iJDa_yHjy8f4eRNGFnCjGFO3a0xP_2_6hUL7xZAj_fI2ssyzuLejoPxdta"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto pt-20 px-container-padding-mobile md:px-container-padding-desktop pb-stack-lg scroll-smooth">
+<!-- Hero Section -->
+<section class="mb-stack-lg ai-focus rounded-xl p-stack-lg border-l-4 border-primary">
+<div class="flex items-start justify-between">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-background mb-stack-sm">Good morning, Alex.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">AI has prioritized <span class="font-bold text-primary">4 urgent items</span> for you today.</p>
+</div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+</section>
+<!-- AI Action Center Grid -->
+<section class="mb-stack-lg">
+<h3 class="font-headline-md text-headline-md text-on-background mb-stack-md">AI Action Center</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg p-stack-md border border-surface-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-stack-md">
+<span class="material-symbols-outlined text-error" data-icon="mail">mail</span>
+<span class="bg-error/10 text-error px-2 py-1 rounded font-label-sm text-label-sm">Urgent</span>
+</div>
+<div class="mb-stack-md">
+<h4 class="font-body-lg text-body-lg font-semibold text-on-surface">Urgent Emails</h4>
+<span class="font-headline-lg text-headline-lg text-on-background">3</span>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline text-left">Review →</button>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg p-stack-md border border-surface-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-stack-md">
+<span class="material-symbols-outlined text-tertiary" data-icon="task_alt">task_alt</span>
+<span class="bg-tertiary/10 text-tertiary px-2 py-1 rounded font-label-sm text-label-sm">Action Req</span>
+</div>
+<div class="mb-stack-md">
+<h4 class="font-body-lg text-body-lg font-semibold text-on-surface">Tasks</h4>
+<span class="font-headline-lg text-headline-lg text-on-background">5</span>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline text-left">Review →</button>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg p-stack-md border border-surface-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-stack-md">
+<span class="material-symbols-outlined text-secondary" data-icon="timer">timer</span>
+<span class="bg-secondary/10 text-secondary px-2 py-1 rounded font-label-sm text-label-sm">Due Soon</span>
+</div>
+<div class="mb-stack-md">
+<h4 class="font-body-lg text-body-lg font-semibold text-on-surface">Deadlines</h4>
+<span class="font-headline-lg text-headline-lg text-on-background">2</span>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline text-left">Review →</button>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-lg p-stack-md border border-surface-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-stack-md">
+<span class="material-symbols-outlined text-primary" data-icon="reply">reply</span>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded font-label-sm text-label-sm">Waiting</span>
+</div>
+<div class="mb-stack-md">
+<h4 class="font-body-lg text-body-lg font-semibold text-on-surface">Replies Needed</h4>
+<span class="font-headline-lg text-headline-lg text-on-background">8</span>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline text-left">Review →</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating AI Copilot Button -->
+<button class="fixed bottom-stack-lg right-stack-lg bg-primary-container text-on-primary rounded-full px-stack-md py-stack-sm flex items-center gap-stack-sm shadow-lg hover:shadow-xl transition-shadow z-30 group">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span class="font-label-md text-label-md font-semibold max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap">AI Copilot</span>
+</button>
+</div>
+</body></html>

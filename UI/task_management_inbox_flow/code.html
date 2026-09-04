@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Management - Inbox Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#006477",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary": "#003d9b",
+                        "surface-dim": "#d9dadb",
+                        "on-error": "#ffffff",
+                        "outline": "#737685",
+                        "on-tertiary-container": "#76e2ff",
+                        "tertiary-fixed-dim": "#48d7f9",
+                        "secondary": "#4c5e83",
+                        "on-primary-fixed": "#001848",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-primary-container": "#c4d2ff",
+                        "tertiary-fixed": "#afecff",
+                        "secondary-container": "#bfd2fd",
+                        "on-tertiary-fixed-variant": "#004e5d",
+                        "surface-container": "#edeeef",
+                        "surface": "#f8f9fa",
+                        "inverse-primary": "#b2c5ff",
+                        "inverse-surface": "#2e3132",
+                        "surface-tint": "#0c56d0",
+                        "on-secondary-fixed": "#041b3c",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#34476a",
+                        "primary-container": "#0052cc",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1d",
+                        "background": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#434654",
+                        "surface-variant": "#e1e3e4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary-container": "#475a7e",
+                        "tertiary": "#004b59",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed-dim": "#b4c7f1",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "primary-fixed": "#dae2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "container-padding-desktop": "32px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "16px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-lowest fixed left-0 top-0 h-screen w-[240px] border-r border-surface-variant shadow-sm flex flex-col h-full py-stack-lg z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                IF
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Inbox Flow</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">AI Productivity</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-unit">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inbox">inbox</span>
+<span class="font-body-md text-body-md">Inbox</span>
+</a>
+</li>
+<li>
+<!-- Active State: Tasks -->
+<a class="flex items-center gap-3 px-gutter py-2 text-primary font-bold border-r-4 border-primary bg-surface-container-lowest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined filled" data-icon="checklist" style="font-variation-settings: 'FILL' 1;">checklist</span>
+<span class="font-body-md text-body-md">Tasks</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span class="font-body-md text-body-md">Deadlines</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="repeat">repeat</span>
+<span class="font-body-md text-body-md">Follow-ups</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+</li>
+<li class="mt-stack-lg pt-stack-sm border-t border-surface-variant">
+<a class="flex items-center gap-3 px-gutter py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="px-gutter mt-auto pt-stack-md">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-2 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                AI Copilot
+            </button>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest fixed top-0 right-0 w-[calc(100%-240px)] h-16 border-b border-surface-variant flex justify-between items-center px-container-padding-desktop z-10">
+<div class="flex items-center flex-1 max-w-md">
+<!-- Search Bar on left as per JSON -->
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-on-surface font-body-md focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search tasks, emails..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-surface-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate user in a modern office environment. The lighting is bright and clear, reflecting a clean, minimalist, high-utility SaaS platform aesthetic. The user appears calm and in control, aligning with the brand's 'effortless control' emotional response." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZNaW2LSRjJYA99UGjOPKE4xSp9cbA_Ihz_F-kg2rpkIpwjdSeIY3of5eVhWTo9YTjuXnfIeMkBoP71f-Vp42s7Dwyo4BKZhG4mi3f2exsXdFpl9gT7AHAUGtenMFhL__IjhjieGqCptt0N-LX5gDop0dfT4iQ2QmJjAZHxp8xmjA4iPV2UMWuhzXQ8-YXZ__qcId-H8vscz92S9SYczuBGoaAMcC6UJezs_xrB97J_rUrF8qyTfTf"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] mt-16 p-container-padding-desktop w-[calc(100%-240px)] min-h-[calc(100vh-64px)]">
+<!-- Header -->
+<div class="flex items-center justify-between mb-stack-lg">
+<div class="flex items-center gap-3">
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Actionable Tasks</h2>
+<span class="bg-primary-container text-on-primary-container font-label-md text-label-md px-3 py-1 rounded-full">12 Total</span>
+</div>
+<!-- Filters -->
+<div class="flex bg-surface-container-low rounded-lg p-1 border border-surface-variant">
+<button class="px-4 py-1.5 rounded bg-surface-container-lowest text-on-surface shadow-sm font-label-md text-label-md transition-all">Active</button>
+<button class="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">Completed</button>
+<button class="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">Overdue</button>
+</div>
+</div>
+<!-- Task Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-surface-variant">
+<tr>
+<th class="py-3 px-4 w-12 text-center">
+<span class="material-symbols-outlined text-outline text-[20px]">check_box_outline_blank</span>
+</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Task Name</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Source Email</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Deadline</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Priority</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Task Row 1 -->
+<tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors duration-150 group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col gap-1">
+<span class="font-bold text-on-surface">Review Q3 Marketing Strategy Draft</span>
+<!-- AI Duplicate Prevention Indicator -->
+<div class="inline-flex items-center gap-1 bg-[#DEEBFF] text-primary-fixed-variant px-2 py-0.5 rounded-full w-max border border-[#bfd2fd]">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm">AI merged 2 similar tasks</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<a class="text-primary hover:underline flex items-center gap-1 w-max" href="#">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+                                    Fwd: Q3 Strategy Updates
+                                </a>
+</td>
+<td class="py-4 px-4 text-on-surface">
+<div class="flex items-center gap-2">
+                                    Today, 5:00 PM
+                                    <span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-1.5 rounded">Urgent</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-1 rounded-sm w-max block">High</span>
+</td>
+<td class="py-4 px-4">
+<span class="text-on-surface-variant">Pending</span>
+</td>
+</tr>
+<!-- Task Row 2 -->
+<tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors duration-150 group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4">
+<span class="font-bold text-on-surface">Approve Vendor Invoices for August</span>
+</td>
+<td class="py-4 px-4">
+<a class="text-primary hover:underline flex items-center gap-1 w-max" href="#">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+                                    Action Required: August Invoices
+                                </a>
+</td>
+<td class="py-4 px-4 text-on-surface">
+                                Tomorrow
+                            </td>
+<td class="py-4 px-4">
+<span class="bg-surface-container-high text-on-surface font-label-sm text-label-sm px-2 py-1 rounded-sm w-max block">Medium</span>
+</td>
+<td class="py-4 px-4">
+<span class="text-on-surface-variant">Pending</span>
+</td>
+</tr>
+<!-- Task Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150 group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-4 px-4">
+<span class="font-bold text-on-surface">Schedule sync with Design Team</span>
+</td>
+<td class="py-4 px-4">
+<a class="text-primary hover:underline flex items-center gap-1 w-max" href="#">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+                                    Design System v2 Kickoff
+                                </a>
+</td>
+<td class="py-4 px-4 text-on-surface">
+                                Oct 15, 2023
+                            </td>
+<td class="py-4 px-4">
+<span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-2 py-1 rounded-sm w-max block">Low</span>
+</td>
+<td class="py-4 px-4">
+<span class="text-on-surface-variant">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Empty State (Hidden in this view, provided for structure) -->
+<div class="hidden flex-col items-center justify-center py-20 text-center">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-outline text-[32px]">task_alt</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">All caught up!</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">AI hasn't found any new tasks in your recent emails. Enjoy the Inbox Zero feeling.</p>
+</div>
+</main>
+</body></html>

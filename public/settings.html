@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Settings</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .settings-card {
+      background: var(--surface);
+      border: 1px solid var(--outline-v);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--outline-v);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--on-surface);
+      margin-bottom: 2px;
+    }
+    .settings-desc {
+      font-size: 13px;
+      color: var(--on-surface-v);
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div><div class="brand-name">Inbox Flow</div><div class="brand-sub">AI Productivity</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-page="dashboard"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item" data-page="inbox"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item" data-page="tasks"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item" data-page="deadlines"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item" data-page="followups"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item" data-page="analytics"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="/settings" class="nav-settings active" style="color:var(--primary-btn);font-weight:600;"><i class="bi bi-gear-fill"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <h1 style="font-size:20px;font-weight:700;margin:0;">Settings & Preferences</h1>
+      <div class="topbar-actions ms-auto">
+        <div class="icon-btn" onclick="toggleTheme()" title="Toggle Theme"><i class="bi bi-moon-stars"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="page-content" style="max-width:850px;">
+
+      <!-- Profile Header -->
+      <div class="settings-card d-flex align-items-center gap-3">
+        <div id="settings-avatar">
+          <div class="avatar-placeholder" style="width:56px;height:56px;font-size:20px;">U</div>
+        </div>
+        <div style="flex:1;">
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:2px;" id="user-name">Loading Profile...</h2>
+          <p style="font-size:13px;color:var(--on-surface-v);margin:0;" id="user-email">...</p>
+        </div>
+        <div>
+          <span class="badge-priority badge-LOW"><i class="bi bi-check-circle"></i> Connected</span>
+        </div>
+      </div>
+
+      <!-- Appearance & Theme -->
+      <div class="settings-card">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;">Appearance</h3>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-title"><i class="bi bi-circle-half me-2"></i> Theme Mode</div>
+            <div class="settings-desc">Choose between Light and Dark interface modes</div>
+          </div>
+          <div>
+            <button class="btn-secondary" id="theme-toggle-btn" onclick="toggleTheme()">
+              <i class="bi bi-moon"></i> Dark Mode
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- About InboxFlow -->
+      <div class="settings-card">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;">Application</h3>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-title"><i class="bi bi-info-circle me-2"></i> About InboxFlow</div>
+            <div class="settings-desc">Learn about the design, stack, AI models, and vision of InboxFlow</div>
+          </div>
+          <div>
+            <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#about-modal">
+              <i class="bi bi-info-circle-fill"></i> About InboxFlow
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-title"><i class="bi bi-cpu me-2"></i> Connected AI Engine</div>
+            <div class="settings-desc">Groq High-Speed LPU Inference & Supabase Database</div>
+          </div>
+          <div>
+            <span class="badge-cat">Groq + Supabase</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session & Logout -->
+      <div class="settings-card">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;color:var(--error);">Account Session</h3>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-title">Sign Out of InboxFlow</div>
+            <div class="settings-desc">Terminates your current Gmail OAuth session and returns to login</div>
+          </div>
+          <div>
+            <button class="btn-danger" onclick="logoutSession()">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- About InboxFlow Modal -->
+<div class="modal fade" id="about-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background:var(--surface);border:1px solid var(--outline-v);border-radius:var(--radius-lg);">
+      <div class="modal-header" style="border-bottom:1px solid var(--outline-v);">
+        <div class="d-flex align-items-center gap-2">
+          <div class="brand-icon" style="width:32px;height:32px;"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+          <h5 class="modal-title mb-0" style="font-weight:700;">About InboxFlow</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="line-height:1.7;">
+        <div class="ai-insight-box mb-3">
+          <h4 style="font-size:16px;font-weight:700;color:var(--primary-btn);margin-bottom:4px;">
+            InboxFlow — AI-Powered Email & Productivity Assistant
+          </h4>
+          <p style="font-size:13px;color:var(--on-surface-v);margin:0;">
+            Version 1.0.0 • Designed with Corporate Modernism & Minimalism
+          </p>
+        </div>
+
+        <h5 style="font-size:14px;font-weight:700;margin-top:16px;">🚀 What is InboxFlow?</h5>
+        <p style="font-size:13px;color:var(--on-surface);">
+          InboxFlow is an intelligent SaaS productivity dashboard engineered to turn chaotic email inboxes into structured action items, deadlines, and smart follow-up workflows.
+        </p>
+
+        <h5 style="font-size:14px;font-weight:700;margin-top:16px;">🛠️ Full Architecture Stack</h5>
+        <ul style="font-size:13px;color:var(--on-surface);padding-left:20px;">
+          <li><strong>Frontend:</strong> HTML5, Custom CSS Tokens, Bootstrap 5, Vanilla JavaScript.</li>
+          <li><strong>Backend:</strong> Node.js + Express.js REST API.</li>
+          <li><strong>Email Integration:</strong> Google OAuth2 + Gmail API (real-time thread syncing & reply drafting).</li>
+          <li><strong>AI Engine:</strong> Groq API with multi-model fallback (Llama 3 & GPT models) for high-speed categorization, summaries, and reply generation.</li>
+          <li><strong>Database:</strong> Supabase PostgreSQL storing tasks, deadlines, follow-ups, and user analytics.</li>
+        </ul>
+
+        <h5 style="font-size:14px;font-weight:700;margin-top:16px;">✨ Core Capabilities</h5>
+        <div class="row g-2 mt-1">
+          <div class="col-md-6">
+            <div class="p-2 border rounded" style="font-size:12px;background:var(--surface-low);">
+              <strong>📥 Smart AI Inbox:</strong> Auto-assigned HIGH/MEDIUM/LOW priority tags and intent labels.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-2 border rounded" style="font-size:12px;background:var(--surface-low);">
+              <strong>🧠 Thread Intelligence:</strong> Executive 3-bullet summaries & priority scores.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-2 border rounded" style="font-size:12px;background:var(--surface-low);">
+              <strong>📅 Deadline Tracker:</strong> Calendar view, approaching alerts & 1:00 PM daily reports.
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-2 border rounded" style="font-size:12px;background:var(--surface-low);">
+              <strong>🛡️ Spam Shield:</strong> Multi-tier phishing and unsolicited promo detector.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--outline-v);">
+        <button class="btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script>
+async function logoutSession() {
+  if (confirm('Are you sure you want to log out?')) {
+    window.location.href = '/auth/logout';
+  }
+}
+
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) {
+    window.location.href = '/';
+    return;
+  }
+
+  document.getElementById('user-name').textContent = user.name || 'InboxFlow User';
+  document.getElementById('user-email').textContent = user.email || '';
+
+  if (user.picture) {
+    document.getElementById('settings-avatar').innerHTML = `<img src="${user.picture}" class="avatar" style="width:56px;height:56px;">`;
+  } else {
+    document.getElementById('settings-avatar').innerHTML = `<div class="avatar-placeholder" style="width:56px;height:56px;font-size:20px;">${getInitials(user.name)}</div>`;
+  }
+})();
+</script>
+</body>
+</html>
+

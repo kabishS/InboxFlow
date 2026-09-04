@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Analytics</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div><div class="brand-name">Inbox Flow</div><div class="brand-sub">AI Productivity</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item active"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" placeholder="Search insights...">
+      </div>
+      <div class="topbar-actions">
+        <div class="icon-btn"><i class="bi bi-bell"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <h1 style="font-size:26px;font-weight:700;margin-bottom:24px;">Inbox Productivity Insights</h1>
+
+      <!-- Stats Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="stat-label">EMAILS PROCESSED</div>
+              <div style="width:32px;height:32px;background:var(--ai-tint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-envelope-check" style="color:var(--primary-btn);"></i>
+              </div>
+            </div>
+            <div class="stat-number" id="stat-processed">—</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="stat-label">TASKS EXTRACTED</div>
+              <div style="width:32px;height:32px;background:var(--ai-tint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-check2-circle" style="color:var(--primary-btn);"></i>
+              </div>
+            </div>
+            <div class="stat-number" id="stat-tasks-total">—</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="stat-label">REPLIES GENERATED</div>
+              <div style="width:32px;height:32px;background:var(--ai-tint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-robot" style="color:var(--primary-btn);"></i>
+              </div>
+            </div>
+            <div class="stat-number" id="stat-replies">—</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="stat-label">AVG. RESPONSE TIME</div>
+              <div style="width:32px;height:32px;background:var(--ai-tint);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-clock" style="color:var(--primary-btn);"></i>
+              </div>
+            </div>
+            <div class="stat-number" id="stat-response">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="row g-4">
+        <div class="col-md-8">
+          <div class="card" style="padding:24px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 style="font-size:16px;font-weight:700;">Weekly Activity</h3>
+              <select class="form-select" style="width:auto;font-size:13px;">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+              </select>
+            </div>
+            <canvas id="activity-chart" height="200"></canvas>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card" style="padding:24px;margin-bottom:16px;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Workload Distribution</h3>
+            <canvas id="workload-chart" height="160"></canvas>
+            <div class="d-flex gap-3 justify-content-center mt-2" style="font-size:12px;">
+              <span><span style="display:inline-block;width:10px;height:10px;background:var(--primary);border-radius:50%;"></span> High</span>
+              <span><span style="display:inline-block;width:10px;height:10px;background:var(--secondary);border-radius:50%;"></span> Medium</span>
+              <span><span style="display:inline-block;width:10px;height:10px;background:var(--secondary-c);border-radius:50%;"></span> Low</span>
+            </div>
+          </div>
+          <div class="card" style="padding:24px;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Task Completion</h3>
+            <div class="d-flex align-items-center gap-3">
+              <div style="position:relative;width:80px;height:80px;">
+                <canvas id="completion-chart"></canvas>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;" id="completion-pct">—</div>
+              </div>
+              <div>
+                <div style="font-size:13px;" id="tasks-completed-count">— completed</div>
+                <div style="font-size:13px;color:var(--on-surface-v);" id="tasks-pending-count">— pending</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user.picture) document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+
+  try {
+    const data = await API.getAnalytics();
+
+    document.getElementById('stat-processed').textContent = data.analytics?.emails_processed || data.tasks_total || '—';
+    document.getElementById('stat-tasks-total').textContent = data.tasks_total || '—';
+    document.getElementById('stat-replies').textContent = data.analytics?.replies_generated || '—';
+    document.getElementById('stat-response').textContent = data.analytics?.avg_response_time ? data.analytics.avg_response_time + 'h' : '—';
+
+    const completed = data.tasks_completed || 0;
+    const total = data.tasks_total || 1;
+    const pct = Math.round((completed / total) * 100);
+    document.getElementById('completion-pct').textContent = pct + '%';
+    document.getElementById('tasks-completed-count').textContent = completed + ' completed';
+    document.getElementById('tasks-pending-count').textContent = data.tasks_pending + ' pending';
+
+    // Weekly activity chart
+    const actCtx = document.getElementById('activity-chart').getContext('2d');
+    new Chart(actCtx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Emails',
+          data: [0, 0, 0, 0, 0, 0, 0],
+          borderColor: '#0052cc',
+          backgroundColor: 'rgba(0,82,204,0.08)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#0052cc'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, grid: { color: '#edeeef' } }, x: { grid: { display: false } } }
+      }
+    });
+
+    // Workload donut
+    const wlCtx = document.getElementById('workload-chart').getContext('2d');
+    new Chart(wlCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{ data: [data.tasks_completed || 1, data.tasks_pending || 1, 1], backgroundColor: ['#003d9b', '#4c5e83', '#bfd2fd'], borderWidth: 0 }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, cutout: '65%' }
+    });
+
+    // Task completion ring
+    const tcCtx = document.getElementById('completion-chart').getContext('2d');
+    new Chart(tcCtx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [completed, Math.max(total - completed, 0)],
+          backgroundColor: ['#0052cc', '#e1e3e4'],
+          borderWidth: 0
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false }, tooltip: { enabled: false } }, cutout: '70%' }
+    });
+
+  } catch(e) {
+    showToast('Error loading analytics: ' + e.message, 'error');
+  }
+})();
+</script>
+</body>
+</html>
+

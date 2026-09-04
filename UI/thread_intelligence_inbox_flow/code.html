@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inbox Flow - Email Thread</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#006477",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-background": "#191c1d",
+                      "on-primary-fixed-variant": "#0040a2",
+                      "primary": "#003d9b",
+                      "surface-dim": "#d9dadb",
+                      "on-error": "#ffffff",
+                      "outline": "#737685",
+                      "on-tertiary-container": "#76e2ff",
+                      "tertiary-fixed-dim": "#48d7f9",
+                      "secondary": "#4c5e83",
+                      "on-primary-fixed": "#001848",
+                      "secondary-fixed": "#d7e2ff",
+                      "on-primary-container": "#c4d2ff",
+                      "tertiary-fixed": "#afecff",
+                      "secondary-container": "#bfd2fd",
+                      "on-tertiary-fixed-variant": "#004e5d",
+                      "surface-container": "#edeeef",
+                      "surface": "#f8f9fa",
+                      "inverse-primary": "#b2c5ff",
+                      "inverse-surface": "#2e3132",
+                      "surface-tint": "#0c56d0",
+                      "on-secondary-fixed": "#041b3c",
+                      "surface-container-low": "#f3f4f5",
+                      "on-secondary-fixed-variant": "#34476a",
+                      "primary-container": "#0052cc",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f8f9fa",
+                      "error": "#ba1a1a",
+                      "on-surface": "#191c1d",
+                      "background": "#f8f9fa",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface-variant": "#434654",
+                      "surface-variant": "#e1e3e4",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#001f27",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#e7e8e9",
+                      "on-secondary-container": "#475a7e",
+                      "tertiary": "#004b59",
+                      "outline-variant": "#c3c6d6",
+                      "secondary-fixed-dim": "#b4c7f1",
+                      "on-error-container": "#93000a",
+                      "primary-fixed-dim": "#b2c5ff",
+                      "primary-fixed": "#dae2ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "container-padding-desktop": "32px",
+                      "gutter": "24px",
+                      "container-padding-mobile": "16px",
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface h-full flex overflow-hidden font-body-md">
+<!-- SideNavBar (Suppressed for focused email view per rules, but requested by prompt. Nav is task focused, but prompt explicitly asks for it. Including SideNav as an anchor, but usually hidden on detail pages) -->
+<!-- Wait, "If designing a sub-page featuring a 'Back' action... suppress the navigation to prioritize the content canvas." But Prompt says "SideNavBar and TopAppBar." Priority: User Prompt or Protocol? Conflict Resolution Protocol says JSON is authority. But Prompt explicitly asked. I'll include them as they are structural. -->
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest fixed left-0 top-0 h-screen w-[240px] border-r border-surface-variant shadow-sm flex-col py-stack-lg transition-colors duration-200 z-20">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold">IF</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Inbox Flow</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">AI Productivity</p>
+</div>
+</div>
+<ul class="flex flex-col gap-unit px-stack-sm flex-1">
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-primary font-bold border-r-4 border-primary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inbox</span>
+<span class="font-body-md text-body-md">Inbox</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">checklist</span>
+<span class="font-body-md text-body-md">Tasks</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
+<span class="font-body-md text-body-md">Deadlines</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">repeat</span>
+<span class="font-body-md text-body-md">Follow-ups</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm rounded-lg hover:bg-surface-container-low transition-colors duration-200 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="px-gutter mt-auto">
+<button class="w-full bg-surface-container-highest text-on-surface font-label-md text-label-md py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+                AI Copilot
+            </button>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[240px] h-screen overflow-hidden bg-background">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest fixed top-0 right-0 w-full md:w-[calc(100%-240px)] h-16 border-b border-surface-variant flex justify-between items-center px-container-padding-desktop z-10">
+<div class="flex items-center gap-4">
+<!-- Mobile menu toggle (optional) -->
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<button class="flex items-center gap-2 text-primary font-label-md text-label-md hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">arrow_back</span>
+                    Back to Inbox
+                </button>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">smart_toy</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small circular profile picture of a professional user in a modern corporate setting, smiling slightly with good natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANHdEBi-FV-0yfeQlw1FBttYJ2hTEmhj_8avTG7haSu67CFagYmZKp-MzLixvXFL11swyKovF3qM0SN9aANInZocRKIkAuqszf3m9vsBFBF0VvvxfsXCIa4kixFiVAU8s7N8LhByzuqKzdJWWCRmKKrWHJNfK-9XrRya8ecewU_4yPg-fFqy6KYckeEh-agxmev1umuytMQbtrbcnbOzAjqSEQtH4cq2h1sfDI5O1ubmLLtYuNvuHh"/>
+</div>
+</div>
+</header>
+<!-- Two Column Layout Area -->
+<main class="flex-1 mt-16 flex flex-col lg:flex-row overflow-hidden">
+<!-- Center Column: Email Thread -->
+<div class="flex-1 overflow-y-auto p-container-padding-mobile md:p-container-padding-desktop lg:pr-gutter border-r border-surface-variant">
+<div class="max-w-3xl mx-auto">
+<!-- Thread Header -->
+<div class="mb-stack-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-error/10 text-error px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Urgent</span>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Board</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-surface">Q3 Board Deck Finalization</h2>
+</div>
+<!-- Thread Messages -->
+<div class="flex flex-col gap-stack-lg">
+<!-- Message 1 -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-variant shadow-sm relative">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a confident female executive with short hair, wearing a dark blazer, set against a neutral grey background in a corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEOPQtM8Ezk2gd-5OCqPhv8WtXKRBaBZH7jogSi4ZEaG-UnmohPPmAQ8dmcsPsBMlF9D7-oPtUPbC1Ydz1O4e_Kl4RZbe2Lmi5eVGlKr56C8tiFo8iItDOeUd9UMW4ovPQdvzo59x90zHAtbR_5fneuxvpHxG2tciwKQHw2fhX2bdHYtb0u3mCZk7efTULI7BWFBGlxB-WTwU5V30lfYdn4aKGLp33z635592V-pyUCZOdSYfh0lkW"/>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Sarah Jenkins (CEO)</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">To: You, Mark Davis</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 9:15 AM</span>
+</div>
+<div class="text-body-md font-body-md text-on-surface-variant space-y-3">
+<p>Team,</p>
+<p>The Q3 board meeting is fast approaching (next Friday). I need the final slide deck reviewed and approved by this Friday so I have the weekend to rehearse the narrative.</p>
+<p>Can you prioritize reviewing slides 5-10? The revenue projections look a bit aggressive given the Q2 dip, and I want to make sure the narrative is tight before we send the final PDF.</p>
+<p>Thanks,<br/>Sarah</p>
+</div>
+</div>
+<!-- Message 2 -->
+<div class="bg-surface p-stack-md rounded-xl border border-surface-variant relative ml-8">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Headshot of a male professional with glasses and a friendly expression, wearing a light blue dress shirt, in a well-lit modern office space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANHR1EvBw8bB3orQwmliUFnYzwHCdVOoz4Bjt0Di4cFkSzO21wnJY2JF6DJKvKnRSuXIPYJ5XRa23VPTRseNPJqVfMjxwFdvLMykMHg-ldqLW8E0jWeQbD8q4P4KpbJ57szw7uV-gsWesqE5oFbArwhkkOwiL_mcrawkhRdET3UdN4xUG9afllqwhluv_-WV21ZYNb8cNsR8kwsqm-0Hn8iHbRsKXPXwLEHK7M0FW8sRgSrImQStYy"/>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Mark Davis (CFO)</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">To: Sarah Jenkins, You</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 11:30 AM</span>
+</div>
+<div class="text-body-md font-body-md text-on-surface-variant space-y-3">
+<p>Sarah,</p>
+<p>I've taken a first pass at the projections on slide 7. They are aggressive, but supported by the new enterprise contracts signed in September. I've added a bridge slide to explain the jump.</p>
+<p>I'll leave the final review of the narrative on slides 5-10 to the team, but the numbers are locked from my end.</p>
+<p>Best,<br/>Mark</p>
+</div>
+</div>
+<!-- Message 3 -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-surface-variant shadow-sm relative">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a confident female executive with short hair, wearing a dark blazer, set against a neutral grey background in a corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnVvHMzC_f7u5I-7m_lCR_KoHSSmbDCHKl-r80zaWIaWZPXpm7XpeFC597RYDeGkszZlu3LB0coiKQgN6O917khiM93QuNeiQDbz_2TvAipH_Cah3VWfozi6RGMSKwn8CfIbr2mEAYJz7eGQwFIXXvCUXaNRk7pOkDg0pNxOtLKNk35a2qenCz3IF3YvgVc3H1SNbbFn9PfGEO5zLzbxVyHM50F2pNVa2G651amZfETbJ_HuWCvACd"/>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Sarah Jenkins (CEO)</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">To: Mark Davis, You</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 25, 8:05 AM</span>
+</div>
+<div class="text-body-md font-body-md text-on-surface-variant space-y-3">
+<p>Thanks Mark, that bridge slide helps a lot.</p>
+<p>Just waiting on the final sign-off and the compiled PDF from the rest of the team. Let's aim to have it wrapped by EOD tomorrow.</p>
+</div>
+</div>
+</div>
+<!-- Reply Box Stub -->
+<div class="mt-stack-lg bg-surface p-stack-md rounded-xl border border-surface-variant flex items-center gap-3 cursor-pointer hover:border-primary transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">reply</span>
+</div>
+<span class="text-on-surface-variant font-body-md text-body-md">Click here to reply...</span>
+</div>
+</div>
+</div>
+<!-- Right Column: AI Intelligence Panel -->
+<aside class="w-full lg:w-[400px] bg-surface-container-lowest flex-shrink-0 flex flex-col h-full overflow-y-auto border-l border-surface-variant">
+<div class="p-stack-md border-b border-surface-variant bg-[#DEEBFF]/30">
+<div class="flex items-center gap-2 mb-stack-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">monitor_heart</span>
+<h3 class="font-headline-md text-headline-md font-bold text-primary">AI Insights</h3>
+</div>
+<!-- Priority & Intent Grid -->
+<div class="grid grid-cols-2 gap-stack-md mb-stack-lg">
+<div class="bg-surface rounded-xl p-stack-sm border border-primary/20 flex flex-col items-center justify-center text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide mb-1">Priority Score</span>
+<span class="font-headline-xl text-headline-xl text-error font-bold leading-none">92<span class="text-headline-md text-on-surface-variant">/100</span></span>
+</div>
+<div class="bg-surface rounded-xl p-stack-sm border border-surface-variant flex flex-col justify-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide mb-1">Intent</span>
+<span class="font-label-md text-label-md text-on-surface font-bold bg-primary-container/10 text-primary-container px-2 py-1 rounded w-max inline-block">Update / Approval</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant italic mb-2 border-l-2 border-primary pl-3">
+                        "Discusses board-level deadlines and requires executive approval."
+                    </p>
+</div>
+<div class="p-stack-md flex flex-col gap-stack-lg flex-1">
+<!-- AI Summary -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wide mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">summarize</span> Summary
+                        </h4>
+<ul class="space-y-2 font-body-md text-body-md text-on-surface-variant list-disc pl-5">
+<li>CEO needs final Q3 Board Deck reviewed by Friday.</li>
+<li>CFO has approved the financial projections and added a bridge slide.</li>
+<li>Pending your review of slides 5-10 and submission of final PDF.</li>
+</ul>
+</div>
+<!-- Detected Deadlines -->
+<div class="bg-error/5 border border-error/20 rounded-xl p-stack-md">
+<h4 class="font-label-md text-label-md text-error uppercase tracking-wide mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">schedule</span> Deadline
+                        </h4>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Due Friday, Oct 27 (2 days)</p>
+</div>
+<!-- Detected Tasks -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wide mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">checklist</span> Detected Tasks
+                        </h4>
+<div class="space-y-2">
+<label class="flex items-start gap-3 p-3 bg-surface rounded-lg border border-surface-variant cursor-pointer hover:border-primary transition-colors">
+<input class="mt-1 rounded text-primary focus:ring-primary border-outline" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface select-none">Review slides 5-10</span>
+</label>
+<label class="flex items-start gap-3 p-3 bg-surface rounded-lg border border-surface-variant cursor-pointer hover:border-primary transition-colors">
+<input class="mt-1 rounded text-primary focus:ring-primary border-outline" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface select-none">Send final PDF</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Sticky CTA Bottom -->
+<div class="p-stack-md border-t border-surface-variant bg-surface-container-lowest mt-auto">
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-primary transition-colors flex justify-center items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                        Generate Reply
+                    </button>
+</div>
+</aside>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InboxFlow — Compose & Compress</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    .mode-toggle-bar {
+      background: var(--surface-low);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      display: inline-flex;
+      gap: 4px;
+      border: 1px solid var(--outline-v);
+    }
+    .mode-tab-btn {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--on-surface-v);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .mode-tab-btn.active {
+      background: var(--surface);
+      color: var(--primary-btn);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .tone-chip {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--outline-v);
+      background: var(--surface);
+      color: var(--on-surface-v);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tone-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .tone-chip.active {
+      background: var(--primary-bg);
+      border-color: var(--primary-btn);
+      color: var(--primary-btn);
+      font-weight: 600;
+    }
+    .compress-stat-card {
+      background: linear-gradient(135deg, rgba(0,61,155,0.04), rgba(0,151,167,0.08));
+      border: 1px solid var(--primary-light);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+    }
+    .ai-glow-border {
+      position: relative;
+      border: 1px solid rgba(0, 82, 204, 0.35);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .ai-glow-border::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary-btn), #0097a7, #48d7f9);
+    }
+    .digest-bullet {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    .digest-bullet i {
+      color: var(--primary-btn);
+      font-size: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .form-control-custom {
+      background: var(--surface);
+      border: 1px solid var(--outline-v);
+      color: var(--on-surface);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13.5px;
+      transition: border-color 0.15s;
+    }
+    .form-control-custom:focus {
+      border-color: var(--primary-btn);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12);
+    }
+    .followup-chips { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .followup-chip {
+      padding: 4px 10px; font-size: 12px; font-weight: 600;
+      border-radius: var(--radius-pill); border: 1px solid var(--outline-v);
+      background: var(--surface); color: var(--on-surface-v);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .followup-chip:hover { border-color: var(--primary-btn); color: var(--primary-btn); }
+    .followup-chip.active { background: var(--primary-btn); color: #fff; border-color: var(--primary-btn); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="/images/logo.png" alt="InboxFlow Logo"></div>
+      <div>
+        <div class="brand-name">Inbox Flow</div>
+        <div class="brand-sub">AI Productivity</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item" data-page="dashboard"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/inbox" class="nav-item" data-page="inbox"><i class="bi bi-inbox"></i> Inbox</a>
+      <a href="/compose" class="nav-item active" data-page="compose"><i class="bi bi-pencil-square"></i> Compose & Compress</a>
+      <a href="/tasks" class="nav-item" data-page="tasks"><i class="bi bi-check2-square"></i> Tasks</a>
+      <a href="/deadlines" class="nav-item" data-page="deadlines"><i class="bi bi-calendar-event"></i> Deadlines</a>
+      <a href="/followups" class="nav-item" data-page="followups"><i class="bi bi-arrow-repeat"></i> Follow-ups</a>
+      <a href="/spam" class="nav-item" data-page="spam"><i class="bi bi-shield-x"></i> Spam Shield</a>
+      <a href="/analytics" class="nav-item" data-page="analytics"><i class="bi bi-bar-chart"></i> Analytics</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="/settings" class="nav-settings"><i class="bi bi-gear"></i> Settings</a>
+      <button class="btn-copilot" onclick="window.location.href='/copilot'"><i class="bi bi-robot"></i> AI Copilot</button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="d-flex align-items-center gap-3">
+        <h5 class="mb-0 fw-bold" style="color:var(--on-surface);">✍️ Compose & ⚡ Compress</h5>
+      </div>
+      <div class="mode-toggle-bar">
+        <button class="mode-tab-btn active" id="tab-btn-compose" onclick="switchMode('compose')">
+          <i class="bi bi-pencil-square"></i> AI Email Writer
+        </button>
+        <button class="mode-tab-btn" id="tab-btn-compress" onclick="switchMode('compress')">
+          <i class="bi bi-lightning-charge-fill"></i> AI Email Compressor
+        </button>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
+          <i class="bi bi-moon"></i>
+        </button>
+        <div class="icon-btn" onclick="window.location.href='/settings'" title="Settings"><i class="bi bi-gear"></i></div>
+        <div id="user-avatar"><div class="avatar-placeholder">U</div></div>
+      </div>
+    </header>
+
+    <main class="p-4" style="flex:1;overflow-y:auto;">
+      <div class="container-fluid max-w-5xl mx-auto" style="max-width: 1080px;">
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- MODE 1: AI EMAIL COMPOSER -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <div id="section-compose">
+          <div class="row g-4">
+            <!-- Left: Inputs & AI Prompts -->
+            <div class="col-lg-5">
+              <div class="card p-4 shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <h6 class="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-magic"></i> AI Draft Instructions
+                  </h6>
+                  <span class="badge bg-light text-muted border">Groq AI Powered</span>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">To (Recipient)</label>
+                  <input type="email" class="form-control form-control-custom" id="compose-to" placeholder="e.g. sarah.jenkins@company.com">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">Subject</label>
+                  <input type="text" class="form-control form-control-custom" id="compose-subject" placeholder="e.g. Q3 Strategic Review & Deliverables">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">What do you want to convey?</label>
+                  <textarea class="form-control form-control-custom" id="compose-prompt" rows="3" placeholder="e.g. Ask Sarah for the updated financial numbers before Friday 3pm and share our revised milestones."></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">Tone & Style</label>
+                  <div class="d-flex flex-wrap gap-2" id="tone-selector">
+                    <div class="tone-chip active" data-tone="Professional"><i class="bi bi-briefcase"></i> Professional</div>
+                    <div class="tone-chip" data-tone="Friendly"><i class="bi bi-emoji-smile"></i> Friendly</div>
+                    <div class="tone-chip" data-tone="Short"><i class="bi bi-lightning"></i> Short & Direct</div>
+                    <div class="tone-chip" data-tone="Executive"><i class="bi bi-award"></i> Executive</div>
+                    <div class="tone-chip" data-tone="Formal"><i class="bi bi-shield-check"></i> Formal</div>
+                    <div class="tone-chip" data-tone="Persuasive"><i class="bi bi-megaphone"></i> Persuasive</div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2.5 mt-auto fw-semibold d-flex align-items-center justify-content-center gap-2" id="btn-generate-compose" onclick="generateAiCompose()">
+                  <i class="bi bi-stars"></i> Generate AI Draft
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Live Email Editor & Send -->
+            <div class="col-lg-7">
+              <div class="card p-4 shadow-sm ai-glow-border h-100 d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-envelope-paper text-primary"></i>
+                    <span class="fw-bold" style="color:var(--on-surface);">Email Preview & Editor</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyComposeBody()" title="Copy to clipboard">
+                      <i class="bi bi-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="compressCurrentDraft()" title="Compress this draft into shorter version">
+                      <i class="bi bi-lightning-charge"></i> Make Shorter
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex-grow-1 mb-3">
+                  <textarea class="form-control form-control-custom w-100 h-100" id="compose-body" style="min-height: 280px; resize: vertical; font-family: inherit; font-size: 14px; line-height: 1.6;" placeholder="Click 'Generate AI Draft' or type your email message here..."></textarea>
+                </div>
+
+                <div style="margin-top:10px;margin-bottom:8px;">
+                  <span style="font-size:12px;color:var(--on-surface-v);font-weight:600;"><i class="bi bi-clock"></i> Follow-up if no reply in:</span>
+                  <div class="followup-chips" style="margin-top:6px;">
+                    <span class="followup-chip" onclick="selectFollowUp(1)">1d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(2)">2d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(3)">3d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(4)">4d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(5)">5d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(6)">6d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(7)">7d</span>
+                    <span class="followup-chip" onclick="selectFollowUp(0)" style="background:transparent;">None</span>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                  <div class="small text-muted" id="compose-status-text">
+                    <i class="bi bi-info-circle"></i> Review your draft before sending.
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary px-3" onclick="clearComposeForm()">Clear</button>
+                    <button class="btn btn-primary px-4 fw-semibold d-flex align-items-center gap-2" id="btn-send-email" onclick="sendComposeEmail()">
+                      <i class="bi bi-send-fill"></i> Send via Gmail
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- MODE 2: AI EMAIL COMPRESSOR & DIGEST -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <div id="section-compress" style="display:none;">
+          <div class="row g-4">
+            <!-- Left: Input for compression -->
+            <div class="col-lg-6">
+              <div class="card p-4 shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <h6 class="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-zip"></i> Compress Long Email / Thread
+                  </h6>
+                  <span class="badge bg-light text-muted border">Instant TL;DR & Extraction</span>
+                </div>
+
+                <!-- Fast selection from recent Inbox -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">Or Pick from Recent Inbox Thread:</label>
+                  <select class="form-select form-control-custom" id="compress-thread-select" onchange="onThreadSelectChange()">
+                    <option value="">-- Choose an email from inbox --</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold small text-muted">Paste Long Email Text / Thread Discussion:</label>
+                  <textarea class="form-control form-control-custom" id="compress-input-text" rows="10" placeholder="Paste full email discussion, proposal, client update, or meeting notes here..."></textarea>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2" id="btn-run-compress" onclick="runEmailCompression()">
+                  <i class="bi bi-lightning-charge-fill"></i> Compress with Groq AI
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Compressed Digest Result -->
+            <div class="col-lg-6">
+              <div class="card p-4 shadow-sm ai-glow-border h-100 d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-cpu text-primary"></i>
+                    <span class="fw-bold" style="color:var(--on-surface);">Compressed High-Signal Digest</span>
+                  </div>
+                  <span class="badge bg-success" id="digest-urgency-badge" style="display:none;">Urgency: LOW</span>
+                </div>
+
+                <!-- Compression Stats Pill -->
+                <div id="compress-stats-box" class="compress-stat-card mb-3" style="display:none;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="fw-bold text-primary" id="stat-reduction">84% Shorter</span>
+                      <span class="text-muted small ms-2" id="stat-words">(450 words → 72 words)</span>
+                    </div>
+                    <div class="badge bg-primary text-white" id="stat-time">
+                      <i class="bi bi-clock-history"></i> ~2.2 mins saved
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Digest Content Container -->
+                <div id="compress-result-body" class="flex-grow-1" style="overflow-y:auto; max-height:480px;">
+                  <div class="empty-state py-5 text-center text-muted" id="compress-empty-state">
+                    <i class="bi bi-lightning-charge text-secondary" style="font-size: 38px;"></i>
+                    <h6 class="mt-3 fw-semibold">No Email Compressed Yet</h6>
+                    <p class="small text-muted">Paste a thread on the left or select an inbox email to generate an instant executive digest.</p>
+                  </div>
+
+                  <div id="digest-content" style="display:none;">
+                    <!-- TL;DR -->
+                    <div class="mb-3">
+                      <label class="fw-bold text-uppercase small text-primary mb-1">💡 Executive TL;DR</label>
+                      <p class="p-3 rounded bg-light border fw-medium mb-0" id="digest-tldr" style="color:var(--on-surface); font-size:13.5px;"></p>
+                    </div>
+
+                    <!-- Key Points -->
+                    <div class="mb-3">
+                      <label class="fw-bold text-uppercase small text-primary mb-1">📌 Key Takeaways</label>
+                      <div id="digest-keypoints" class="ps-1"></div>
+                    </div>
+
+                    <!-- Action Items -->
+                    <div class="mb-3">
+                      <label class="fw-bold text-uppercase small text-primary mb-1">🎯 Action Items & Next Steps</label>
+                      <div id="digest-actions" class="ps-1"></div>
+                    </div>
+
+                    <!-- 1-Click Quick Reply Generated -->
+                    <div class="mb-3 pt-2 border-top">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="fw-bold text-uppercase small text-primary">💬 AI Suggested Reply</label>
+                        <button class="btn btn-sm btn-link text-decoration-none p-0" onclick="useReplyInCompose()">
+                          <i class="bi bi-arrow-right-circle"></i> Open in Composer
+                        </button>
+                      </div>
+                      <div class="p-2.5 rounded bg-light border small text-muted" id="digest-reply"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="d-flex gap-2 pt-3 border-top mt-auto" id="compress-footer-actions" style="display:none !important;">
+                  <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="copyCompressedDigest()">
+                    <i class="bi bi-copy"></i> Copy Digest
+                  </button>
+                  <button class="btn btn-primary btn-sm flex-fill" onclick="useReplyInCompose()">
+                    <i class="bi bi-pencil-square"></i> Send Quick Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<button class="fab-copilot" onclick="window.location.href='/copilot'" title="AI Copilot">
+  <i class="bi bi-robot"></i>
+</button>
+
+<script src="/js/api.js"></script>
+<script>
+let selectedTone = 'Professional';
+let cachedThreads = [];
+let currentDigestData = null;
+
+// Tone selection
+document.querySelectorAll('#tone-selector .tone-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('#tone-selector .tone-chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    selectedTone = this.dataset.tone;
+  });
+});
+
+// Mode Switching
+function switchMode(mode) {
+  const isCompose = mode === 'compose';
+  document.getElementById('section-compose').style.display = isCompose ? 'block' : 'none';
+  document.getElementById('section-compress').style.display = isCompose ? 'none' : 'block';
+  document.getElementById('tab-btn-compose').classList.toggle('active', isCompose);
+  document.getElementById('tab-btn-compress').classList.toggle('active', !isCompose);
+}
+
+// Generate AI Compose Draft
+async function generateAiCompose() {
+  const to = document.getElementById('compose-to').value.trim();
+  const subject = document.getElementById('compose-subject').value.trim();
+  const prompt = document.getElementById('compose-prompt').value.trim();
+
+  if (!prompt && !subject) {
+    showToast('Please provide at least a subject or brief instructions for AI.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-generate-compose');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Generating Draft...`;
+  document.getElementById('compose-status-text').innerHTML = `<span class="text-primary"><i class="bi bi-cpu"></i> Groq AI is crafting your email...</span>`;
+
+  try {
+    const data = await API.composeEmail({
+      to,
+      subject,
+      prompt,
+      tone: selectedTone
+    });
+
+    if (data.draft) {
+      document.getElementById('compose-body').value = data.draft;
+      document.getElementById('compose-status-text').innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> AI draft ready (${selectedTone} tone).</span>`;
+      showToast('✨ AI draft generated successfully!', 'success');
+    }
+  } catch (err) {
+    showToast('Failed to generate draft: ' + err.message, 'error');
+    document.getElementById('compose-status-text').innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-circle"></i> Draft generation failed.</span>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+// Compress current draft (make shorter)
+async function compressCurrentDraft() {
+  const currentText = document.getElementById('compose-body').value.trim();
+  if (!currentText) {
+    showToast('No text in editor to compress.', 'error');
+    return;
+  }
+  showToast('Compressing draft to direct & concise version...', 'info');
+  try {
+    const res = await API.compressEmail({ content: currentText });
+    if (res.digest && res.digest.suggested_reply) {
+      document.getElementById('compose-body').value = res.digest.suggested_reply;
+      showToast('Draft compressed & condensed!', 'success');
+    }
+  } catch (e) {
+    showToast('Compression error: ' + e.message, 'error');
+  }
+}
+
+let selectedFollowUpDays = 0;
+
+function selectFollowUp(days) {
+  selectedFollowUpDays = days;
+  document.querySelectorAll('.followup-chip').forEach(c => c.classList.remove('active'));
+  if (days > 0) {
+    event.target.classList.add('active');
+  }
+}
+
+// Send Composed Email
+async function sendComposeEmail() {
+  const to = document.getElementById('compose-to').value.trim();
+  const subject = document.getElementById('compose-subject').value.trim();
+  const body = document.getElementById('compose-body').value.trim();
+
+  if (!to) {
+    showToast('Please enter a recipient email address.', 'error');
+    document.getElementById('compose-to').focus();
+    return;
+  }
+  if (!body) {
+    showToast('Please enter or generate email content.', 'error');
+    document.getElementById('compose-body').focus();
+    return;
+  }
+
+  const btn = document.getElementById('btn-send-email');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+
+  try {
+    const result = await API.sendReply({
+      to,
+      subject: subject || 'Message from InboxFlow',
+      body
+    });
+    
+    if (selectedFollowUpDays > 0) {
+      try {
+        await API.scheduleFollowUp({
+          thread_id: result?.result?.threadId || null,
+          message_id: result?.result?.id || null,
+          subject: subject || 'Message from InboxFlow',
+          to_email: to,
+          followup_days: selectedFollowUpDays
+        });
+        showToast(`Follow-up set for ${selectedFollowUpDays} day${selectedFollowUpDays > 1 ? 's' : ''}`, 'success');
+      } catch(e) { /* silent */ }
+    }
+    
+    showToast(`✅ Email sent successfully to ${to}!`, 'success');
+    setTimeout(() => {
+      window.location.href = '/inbox';
+    }, 1200);
+  } catch (err) {
+    showToast('Failed to send email: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+}
+
+function clearComposeForm() {
+  document.getElementById('compose-to').value = '';
+  document.getElementById('compose-subject').value = '';
+  document.getElementById('compose-prompt').value = '';
+  document.getElementById('compose-body').value = '';
+  document.getElementById('compose-status-text').innerHTML = `<i class="bi bi-info-circle"></i> Editor cleared.`;
+}
+
+function copyComposeBody() {
+  const text = document.getElementById('compose-body').value;
+  if (!text) return;
+  navigator.clipboard.writeText(text);
+  showToast('Draft copied to clipboard!', 'success');
+}
+
+// ─── AI Compressor Functions ──────────────────────────────────────────
+async function loadRecentInboxForCompress() {
+  try {
+    const data = await API.getThreads({ maxResults: 15 });
+    cachedThreads = data.threads || [];
+    const select = document.getElementById('compress-thread-select');
+    select.innerHTML = `<option value="">-- Choose an email from inbox --</option>` +
+      cachedThreads.map(t => `<option value="${t.id}">${(t.subject || 'No Subject').slice(0, 55)} — ${t.from ? t.from.slice(0, 25) : ''}</option>`).join('');
+  } catch (e) {}
+}
+
+async function onThreadSelectChange() {
+  const threadId = document.getElementById('compress-thread-select').value;
+  if (!threadId) return;
+  const match = cachedThreads.find(t => t.id === threadId);
+  if (match) {
+    document.getElementById('compress-input-text').value = `Subject: ${match.subject}\nFrom: ${match.from}\nDate: ${match.date}\n\n${match.snippet}`;
+    runEmailCompression();
+  }
+}
+
+async function runEmailCompression() {
+  const content = document.getElementById('compress-input-text').value.trim();
+  const threadId = document.getElementById('compress-thread-select').value;
+
+  if (!content && !threadId) {
+    showToast('Please paste email text or select an inbox email.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-run-compress');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Compressing with Groq...`;
+
+  try {
+    const res = await API.compressEmail({ content, threadId });
+    currentDigestData = res.digest;
+    renderCompressedDigest(res.digest);
+    showToast('⚡ Email compressed into executive digest!', 'success');
+  } catch (err) {
+    showToast('Compression failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+}
+
+function renderCompressedDigest(d) {
+  document.getElementById('compress-empty-state').style.display = 'none';
+  document.getElementById('digest-content').style.display = 'block';
+  document.getElementById('compress-stats-box').style.display = 'block';
+  document.getElementById('compress-footer-actions').style.setProperty('display', 'flex', 'important');
+
+  // Stats
+  document.getElementById('stat-reduction').textContent = `${d.reduction_percent || 75}% Shorter`;
+  document.getElementById('stat-words').textContent = `(${d.original_words || 200} words → ${d.compressed_words || 40} words)`;
+  document.getElementById('stat-time').innerHTML = `<i class="bi bi-clock-history"></i> ~${d.time_saved_mins || 2.0} mins saved`;
+
+  // Urgency badge
+  const urgencyBadge = document.getElementById('digest-urgency-badge');
+  urgencyBadge.style.display = 'inline-block';
+  urgencyBadge.textContent = `Urgency: ${d.urgency || 'MEDIUM'}`;
+  urgencyBadge.className = `badge ${d.urgency === 'HIGH' ? 'bg-danger' : (d.urgency === 'LOW' ? 'bg-success' : 'bg-warning text-dark')}`;
+
+  // TL;DR
+  document.getElementById('digest-tldr').textContent = d.tldr || 'No summary available.';
+
+  // Keypoints
+  const kpContainer = document.getElementById('digest-keypoints');
+  const points = Array.isArray(d.key_points) ? d.key_points : [d.key_points];
+  kpContainer.innerHTML = points.map(p => `
+    <div class="digest-bullet">
+      <i class="bi bi-check-circle-fill text-primary"></i>
+      <div>${p}</div>
+    </div>
+  `).join('');
+
+  // Actions
+  const actContainer = document.getElementById('digest-actions');
+  const actions = Array.isArray(d.action_items) && d.action_items.length ? d.action_items : ['No immediate blocking action required.'];
+  actContainer.innerHTML = actions.map(a => `
+    <div class="digest-bullet">
+      <i class="bi bi-arrow-right-circle text-info"></i>
+      <div>${a}</div>
+    </div>
+  `).join('');
+
+  // Suggested reply
+  document.getElementById('digest-reply').textContent = d.suggested_reply || 'Thank you for the update.';
+}
+
+function useReplyInCompose() {
+  if (!currentDigestData) return;
+  switchMode('compose');
+  if (currentDigestData.suggested_reply) {
+    document.getElementById('compose-body').value = currentDigestData.suggested_reply;
+  }
+  showToast('Suggested reply transferred to composer!', 'info');
+}
+
+function copyCompressedDigest() {
+  if (!currentDigestData) return;
+  const text = `📋 Executive Summary:\n${currentDigestData.tldr}\n\n📌 Key Takeaways:\n${(currentDigestData.key_points || []).map(p => '• ' + p).join('\n')}\n\n🎯 Next Steps:\n${(currentDigestData.action_items || []).map(a => '• ' + a).join('\n')}`;
+  navigator.clipboard.writeText(text);
+  showToast('Compressed digest copied to clipboard!', 'success');
+}
+
+// ─── Initialize ────────────────────────────────────────────────────────
+(async () => {
+  const { authenticated, user } = await API.getAuthStatus();
+  if (!authenticated) { window.location.href = '/'; return; }
+  if (user && user.picture) {
+    document.getElementById('user-avatar').innerHTML = `<img src="${user.picture}" class="avatar">`;
+  }
+
+  await loadRecentInboxForCompress();
+
+  // Check URL params for mode, recipient, or threadId
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'compress') {
+    switchMode('compress');
+  }
+  if (params.get('to')) {
+    document.getElementById('compose-to').value = params.get('to');
+  }
+  if (params.get('subject')) {
+    document.getElementById('compose-subject').value = params.get('subject');
+  }
+  if (params.get('threadId')) {
+    const tId = params.get('threadId');
+    document.getElementById('compress-thread-select').value = tId;
+    try {
+      const { thread } = await API.getThread(tId);
+      if (thread && thread.messages) {
+        const bodyText = thread.messages.map(m => `From: ${m.from}\nDate: ${m.date}\n\n${m.body}`).join('\n\n---\n\n');
+        document.getElementById('compress-input-text').value = bodyText;
+        if (params.get('mode') === 'compress') {
+          runEmailCompression();
+        }
+      }
+    } catch(e) {}
+  }
+})();
+</script>
+</body>
+</html>
+
