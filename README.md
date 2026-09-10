@@ -115,6 +115,3 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 6. Click **Deploy**!
 
 ---
-
-## 📄 License
-MIT License. Feel free to use and customize for your own projects!
