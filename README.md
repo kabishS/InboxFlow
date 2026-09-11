@@ -1,4 +1,4 @@
-# 📥 InboxFlow — AI-Powered Smart Email & Productivity Assistant
+# 📥 InboxFlow — AI-Powered Smart Email & Productivity Assistant|
 
 > Transform your email into an actionable task and intelligence engine with lightning-fast AI analysis.
 
